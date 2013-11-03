@@ -2,20 +2,22 @@ package jk.socialize.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import jk.socialize.content.Profile;
-import jk.socialize.workers.Searcher;
 import unito.likir.Node;
 import unito.likir.storage.StorageEntry;
 
@@ -110,11 +112,7 @@ public class SearchFrame extends JFrame implements ActionListener
      */
     public void search()
     {
-        /* Create a new Searcher object and use it to do the searches for us */
-        System.out.println("Search Started");
-        Searcher searcher = new Searcher(this.node);
-        searcher.addFilter("keyword", keywordTF.getText());
-        searcher.addFilter("type", Profile.type);
+        /* Search for the specified user */
 
         Collection<StorageEntry> results = null;
         try
@@ -126,20 +124,89 @@ public class SearchFrame extends JFrame implements ActionListener
             System.err.println("Searcher Interrupted");
         }
 
-        /* Now we display these results onto the results panel */
+        /* Now we display the result onto the result panel */
+        StorageEntry profileSE = null;
+        long recency = 0;
         for (StorageEntry e : results)
         {
-            String display = "";
-            display += "Owner Id: " + e.getOwnerId() + "; ";
-            display += "Key: " + e.getKey() + "; ";
-            display += "Content Type: " + e.getContent().getType() + "; ";
-            display += "Content Value: " + new String(e.getContent().getValue()) + "; ";
-            System.out.println(display);
-            label = new JLabel(display);
-
-            resultsPanel.add(label);
+            /* Select the most recent result */
+            if (e.getSubmissionTime() > recency)
+            {
+                recency = e.getSubmissionTime();
+                profileSE = e;
+            }
         }
+
+        /* Add this friend's profile to the frame */
+        resultsPanel.add(new UserDisplay(profileSE));
+
+        /* Refresh the frame */
+        frame.repaint();
+        frame.revalidate();
         System.out.println("Search Ended");
+    }
+
+    /**
+     * @author Joshua Kissoon
+     * @date 20131103
+     * @desc An Inner class that displays the person details on search result
+     */
+    private class UserDisplay extends JPanel
+    {
+
+        /* GUI Components */
+        private final JPanel userPanel = this;
+        private JLabel lbl;
+        private JButton btn;
+        private GridBagConstraints gbc;
+
+        /* Main Components */
+        private Profile userProfile = null;
+
+        private UserDisplay(StorageEntry iProfileSE)
+        {
+            if (iProfileSE != null)
+            {
+                userProfile = new Profile(new String(iProfileSE.getContent().getValue()));
+
+                this.buildGUI();
+                System.out.println("Profile: " + userProfile);
+            }
+
+        }
+
+        /**
+         * @desc Method that puts together the ui
+         */
+        private void buildGUI()
+        {
+            userPanel.setLayout(new GridBagLayout());
+
+            /* User's uid */
+            lbl = new JLabel(userProfile.uid);
+            gbc = getGBConstraints(0, 0);
+            userPanel.add(lbl, gbc);
+
+            /* Add Connection Button */
+            btn = new JButton("Connect");
+            gbc = getGBConstraints(0, 1);
+            userPanel.add(btn, gbc);
+        }
+    }
+
+    private GridBagConstraints getGBConstraints(int x, int y)
+    {
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = x;
+        c.gridy = y;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        c.insets = new Insets(10, 10, 10, 10);
+        c.anchor = GridBagConstraints.WEST;
+
+        return c;
     }
 
     /* LISTENERS */

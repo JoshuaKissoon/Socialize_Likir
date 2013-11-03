@@ -10,7 +10,6 @@ import javax.swing.border.EmptyBorder;
 import jk.socialize.content.Profile;
 import jk.socialize.content.Status;
 import unito.likir.Node;
-import unito.likir.NodeId;
 
 /**
  * @author Joshua Kissoon

@@ -176,7 +176,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         frame.getContentPane().add(scrollPane);
 
         frame.addWindowListener(this);
-        frame.setTitle("Socialize: Secure Social Networking  ---  " + node.getUserId());
+        frame.setTitle("Socialize: ---  " + node.getUserId() + " --- " + node.getAddress().toString());
         frame.setJMenuBar(menuBar);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
