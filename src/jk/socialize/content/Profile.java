@@ -20,6 +20,7 @@ public class Profile implements SocializeContent
     private NodeId key;
     public String uid = "";
     public static final String type = "profile";
+    private final long ttl = 999999999999l;
 
     /* Main Objects */
     private Node node;
@@ -42,17 +43,6 @@ public class Profile implements SocializeContent
 
         /* Setup the profile key here */
         this.generateKey();
-
-        /* Creates a new profile if the profile does not exist */
-        if (!this.nodeProfileExists())
-        {
-            System.out.println("No profile Exists; lets create a new profile");
-            this.createProfile();
-        }
-
-        /* */
-        System.out.println("Profile Found, lets load it");
-        this.loadProfile();
     }
 
     public Profile(String iData)
@@ -404,5 +394,11 @@ public class Profile implements SocializeContent
         data += "************ PRINTING DATA END ************** ";
 
         return data;
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

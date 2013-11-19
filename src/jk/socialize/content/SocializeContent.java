@@ -34,4 +34,10 @@ public interface SocializeContent extends Content
      * @return Returns the data needed to be stored encoded in Json form
      */
     public String getJsonEncodedData();
+    
+    /** 
+     * @desc method that tells how long a content should live on the DHT
+     * @return Returns how long this content will live for
+     */
+    public long getTtl();
 }

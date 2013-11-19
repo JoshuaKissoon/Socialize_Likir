@@ -20,6 +20,7 @@ public class ReferenceImpl implements SocializeContent, Reference
     private String uid;
     private final String type = "references";
     private NodeId key;
+    private final long ttl = 999999999999l;
 
     public ReferenceImpl(String iUid)
     {
@@ -148,6 +149,12 @@ public class ReferenceImpl implements SocializeContent, Reference
         data.put("uid", this.uid);
         data.put("type", this.type);
         return gson.toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 
 }

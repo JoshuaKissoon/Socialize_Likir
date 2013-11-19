@@ -17,6 +17,7 @@ public class Status implements SocializeContent
     private NodeId key;
     private String uid;
     private final String type = "status";
+    private final long ttl = 999999999999l;
 
     public Status(String iStatus, String iUserId)
     {
@@ -137,5 +138,11 @@ public class Status implements SocializeContent
         data.put("status", this.status);
         data.put("uid", this.uid);
         return new Gson().toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

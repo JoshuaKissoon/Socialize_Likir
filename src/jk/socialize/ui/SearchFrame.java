@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import jk.socialize.content.Profile;
+import jk.socialize.content.Relationship;
 import unito.likir.Node;
 import unito.likir.storage.StorageEntry;
 
@@ -31,7 +32,7 @@ public class SearchFrame extends JFrame implements ActionListener
 
     /* Main objects */
     private final SearchFrame frame = this;
-    private Node node;
+    private Node node;          // The node of the currently logged in user
 
     /* Frame Components */
     private JPanel mainPanel, resultsPanel;
@@ -40,7 +41,7 @@ public class SearchFrame extends JFrame implements ActionListener
     /* Form Components */
     private JTextField keywordTF;
     private JLabel label;
-
+    
     public SearchFrame(Node iNode)
     {
         /* Set the node to the input node */
@@ -67,15 +68,15 @@ public class SearchFrame extends JFrame implements ActionListener
             @Override
             public void keyTyped(KeyEvent e)
             {
-
+                
             }
-
+            
             @Override
             public void keyPressed(KeyEvent e)
             {
-
+                
             }
-
+            
             @Override
             public void keyReleased(KeyEvent e)
             {
@@ -113,7 +114,7 @@ public class SearchFrame extends JFrame implements ActionListener
     public void search()
     {
         /* Search for the specified user */
-
+        
         Collection<StorageEntry> results = null;
         try
         {
@@ -162,17 +163,17 @@ public class SearchFrame extends JFrame implements ActionListener
 
         /* Main Components */
         private Profile userProfile = null;
-
+        
         private UserDisplay(StorageEntry iProfileSE)
         {
             if (iProfileSE != null)
             {
                 userProfile = new Profile(new String(iProfileSE.getContent().getValue()));
-
+                
                 this.buildGUI();
                 System.out.println("Profile: " + userProfile);
             }
-
+            
         }
 
         /**
@@ -189,11 +190,21 @@ public class SearchFrame extends JFrame implements ActionListener
 
             /* Add Connection Button */
             btn = new JButton("Connect");
+            btn.addActionListener(new ActionListener()
+            {
+                
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    /* When a user click connect to connect to another user, we create a new Relationship Object */
+                    Relationship r = new Relationship(node.getUserId(), userProfile.uid);
+                }
+            });
             gbc = getGBConstraints(0, 1);
             userPanel.add(btn, gbc);
         }
     }
-
+    
     private GridBagConstraints getGBConstraints(int x, int y)
     {
         GridBagConstraints c = new GridBagConstraints();
@@ -205,7 +216,7 @@ public class SearchFrame extends JFrame implements ActionListener
         c.weighty = 1.0;
         c.insets = new Insets(10, 10, 10, 10);
         c.anchor = GridBagConstraints.WEST;
-
+        
         return c;
     }
 
@@ -213,6 +224,6 @@ public class SearchFrame extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent aE)
     {
-
+        
     }
 }

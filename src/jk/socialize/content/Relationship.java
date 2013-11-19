@@ -17,11 +17,14 @@ public class Relationship implements SocializeContent
     private String connectionUid;   // The person who this user is now connected to
     private NodeId key;
     private final String type = "Relationship";
+    private final long ttl = 999999999999l;
 
     public Relationship(String iOwnerUid, String iConnectionUid)
     {
         /* Set the owner of this relationship */
         this.uid = iOwnerUid;
+        
+        /* Set the connection */
         this.connectionUid = iConnectionUid;
 
         /* Generate a key for this relationship */
@@ -147,5 +150,11 @@ public class Relationship implements SocializeContent
         data.put("connectionUid", this.connectionUid);
         data.put("uid", this.uid);
         return new Gson().toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

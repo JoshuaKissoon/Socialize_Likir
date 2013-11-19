@@ -19,6 +19,7 @@ public class PostsReference implements SocializeContent, Reference
     public static final String type = "PostsReferences";
     private String uid;
     private NodeId key;
+    private final long ttl = 999999999999l;
 
     /* Main Objects */
     HashMap<String, NodeId> references = new HashMap<>();  // A Hashmap<String date, Relationship Object NodeId> to store the connections
@@ -159,5 +160,11 @@ public class PostsReference implements SocializeContent, Reference
         data.put("uid", this.uid);
         data.put("type", this.type);
         return gson.toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

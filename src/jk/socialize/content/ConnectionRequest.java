@@ -17,6 +17,7 @@ public class ConnectionRequest implements SocializeContent
     private String requestee;   // The person who the request is for
     private NodeId key;
     private final String type = "ConnectionRequest";
+    private final long ttl = 999999999999l;
     private Integer status = 0;
 
     /* Static variables */
@@ -160,5 +161,11 @@ public class ConnectionRequest implements SocializeContent
         data.put("key", new String(this.key.getId()));
         data.put("uid", this.uid);
         return new Gson().toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

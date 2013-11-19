@@ -17,6 +17,7 @@ public class UserData implements SocializeContent
     private NodeId key;
     private String uid;
     private final String type = "UserData";
+    private final long ttl = 999999999999l;
 
     /* Storage Objects */
     HashMap<String, Object> userData = new HashMap<>();
@@ -154,5 +155,11 @@ public class UserData implements SocializeContent
         data.put("data", gson.toJson(this.userData));
         data.put("uid", this.uid);
         return gson.toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

@@ -17,6 +17,7 @@ public class Connections implements SocializeContent, Reference
     private final String type = "Connections";
     private String uid;
     private NodeId key;
+    private final long ttl = 999999999999l;
 
     /* Main Objects */
     HashMap<String, String> connections = new HashMap<>();  // A Hashmap<Connection userId, Relationship Object NodeId> to store the connections
@@ -153,5 +154,11 @@ public class Connections implements SocializeContent, Reference
         data.put("uid", this.uid);
         data.put("type", this.type);
         return gson.toJson(data);
+    }
+    
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
     }
 }

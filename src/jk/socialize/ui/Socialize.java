@@ -103,6 +103,19 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         /* Lets load the profile for this node */
         profile = new Profile(node);
 
+        /* Creates a new profile if the profile does not exist */
+        if (!profile.nodeProfileExists())
+        {
+            System.out.println("No profile Exists; lets create a new profile");
+            profile.createProfile();
+        }
+        else
+        {
+            /* Profile Exist, load it */
+            System.out.println("Profile Found, lets load it");
+            profile.loadProfile();
+        }
+
         /* Schedule the node to update it's content every 5 minutes */
         scheduledExecutor.schedule(node.getStorageCleaner(), 2, TimeUnit.MINUTES);
     }
