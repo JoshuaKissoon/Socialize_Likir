@@ -1,11 +1,11 @@
 package jk.socialize.content;
 
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
 /**
- *
  * @author Joshua Kissoon
  * @date 20131025
  * @description A class that holds references to all Connection Requests of a user
@@ -14,14 +14,22 @@ public class ConnectionRequests implements SocializeContent, Reference
 {
 
     /* Class Attributes */
-    private final String type = "Connections";
+    public static String type = "ConnectionRequests";
     private String uid;
     private NodeId key;
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    HashMap<String, String> reference = new HashMap<>();  // A Hashmap<Connection userId, Relationship Object NodeId> to store the connections
+    ArrayList<NodeId> relationships = new ArrayList<>();  // An Arraylist to manage the NodeIds of the Relationship Objects
 
+    /**
+     * @desc Allow initialization of blank object if it's filled from data
+     */
+    public ConnectionRequests()
+    {
+        
+    }
+    
     public ConnectionRequests(String iOwnerUid)
     {
         /* Set the uid of the owner of this content */
@@ -31,10 +39,10 @@ public class ConnectionRequests implements SocializeContent, Reference
         this.generateKey();
     }
 
-    public void addConnection(String iUserId, String iNid)
+    public void addConnectionRequest(NodeId relationshipNid)
     {
         /* Add a new connection for this user */
-        this.reference.put(iUserId, iNid);
+        this.relationships.add(relationshipNid);
     }
 
     /**
@@ -116,7 +124,7 @@ public class ConnectionRequests implements SocializeContent, Reference
         {
             Gson gson = new Gson();
             HashMap data = gson.fromJson(jsonString, HashMap.class);
-            this.reference = gson.fromJson(data.get("connections").toString(), HashMap.class);
+            this.relationships = gson.fromJson(data.get("relationships").toString(), ArrayList.class);
             this.uid = data.get("uid").toString();
             return true;
         }
@@ -150,7 +158,7 @@ public class ConnectionRequests implements SocializeContent, Reference
     {
         HashMap<String, String> data = new HashMap(3);
         Gson gson = new Gson();
-        data.put("connections", gson.toJson(this.reference));
+        data.put("relationships", gson.toJson(this.relationships));
         data.put("uid", this.uid);
         data.put("type", this.type);
         return gson.toJson(data);

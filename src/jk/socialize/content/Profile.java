@@ -30,30 +30,34 @@ public class Profile implements SocializeContent
     private NodeId connectionsRefNid;      // The Node Id of the Connections Object with references to this user's connections
     private NodeId postsRefNid;   // The Node Id of the References Object with references to this user's posts
     private NodeId userDataRefNid;         // The Node Id of the User Data Object
+    private NodeId connectionRequestsRefNid;         // The Node Id of the ConnectionRequests Object
 
     /* Reference objects */
     private PostsReference postsReference = null;
+    private ConnectionRequests connectionRequests = null;
 
-    public Profile(SocializeNode iNode)
+    /**
+     * @desc Constructor for a profile
+     * @param iNode Just some node on the network used within this profile to get data
+     * @param iUserId The user Id which this profile is for
+     */
+    public Profile(SocializeNode iNode, String iUserId)
     {
         /* Set the node */
         this.node = iNode;
 
         /* Set the userId */
-        this.uid = this.node.getUserId();
+        this.uid = iUserId;
 
         /* Setup the profile key here */
         this.generateKey();
     }
 
-    public Profile(String iData)
+    public Profile(SocializeNode iNode, byte[] iData)
     {
-        /* Here we load the profile from it's json data */
-        this.loadData(iData);
-    }
-
-    public Profile(byte[] iData)
-    {
+        /* Set the node */
+        this.node = iNode;
+        
         /* Here we load the profile from it's json data */
         this.loadData(iData);
     }
@@ -146,7 +150,22 @@ public class Profile implements SocializeContent
             e.printStackTrace();
         }
 
-        /* 4. Store the profile object on the DHT */
+        /* 4. Create and store a ConnectionRequestsObject object */
+        try
+        {
+            System.out.println("Creating & Storing User ConnectionsRequest Object.");
+
+            ConnectionRequests connRequests = new ConnectionRequests(this.uid);
+            int replica = node.storeLocallyAndUniversally(connRequests);
+            System.out.println("ConnectionRequests Object Stored at " + replica + " Replicas \n");
+            this.connectionRequestsRefNid = connRequests.getKey();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        /* 5. Store the profile object on the DHT */
         try
         {
             System.out.println("Storing the profile Object on the DHT. Key: " + this.getKey().toString());
@@ -195,6 +214,7 @@ public class Profile implements SocializeContent
         System.out.println(new String(this.connectionsRefNid.getId()));
         System.out.println(new String(this.postsRefNid.getId()));
         System.out.println(new String(this.userDataRefNid.getId()));
+        System.out.println(new String(this.connectionRequestsRefNid.getId()));
     }
 
     /**
@@ -246,7 +266,12 @@ public class Profile implements SocializeContent
     }
 
     /* PROFILE GETTERS AND SETTERS */
-    public Node getNode()
+    public void setNode()
+    {
+        
+    }
+    
+    public SocializeNode getNode()
     {
         return this.node;
     }
@@ -286,6 +311,43 @@ public class Profile implements SocializeContent
         }
 
         return this.postsReference;
+    }
+
+    public ConnectionRequests getConnectionRequests()
+    {
+        if (this.connectionRequests == null)
+        {
+            /* We need to load the connection requests */
+            try
+            {
+                System.out.println("Node \"" + node.getUserId() + "\" Loading Connections request object \n");
+
+                /* Get 5 of this user's profile and choose the most recent */
+                Collection<StorageEntry> results = node.get(this.connectionRequestsRefNid, ConnectionRequests.type, this.uid, true, 5).get();
+
+                if (results.size() > 0)
+                {
+                    long recency = 0;
+                    for (StorageEntry e : results) //print the found values
+                    {
+                        if (e.getSubmissionTime() > recency)
+                        {
+                            recency = e.getSubmissionTime();
+
+                            /* Load/update the profile from this entry */
+                            connectionRequests = new ConnectionRequests();
+                            connectionRequests.loadData(e.getContent().getValue());
+                        }
+                    }
+                }
+            }
+            catch (InterruptedException | ExecutionException ie)
+            {
+                System.err.println("Posts References loading Interrupted");
+            }
+        }
+
+        return this.connectionRequests;
     }
 
     /* METHODS FOR THE "SocializeContent" INTERFACE */
@@ -344,6 +406,7 @@ public class Profile implements SocializeContent
             this.connectionsRefNid = new NodeId(data.get("connectionsRefNid").toString().getBytes());
             this.postsRefNid = new NodeId(data.get("postsRefNid").toString().getBytes());
             this.userDataRefNid = new NodeId(data.get("userDataRefNid").toString().getBytes());
+            this.connectionRequestsRefNid = new NodeId(data.get("connectionRequestsRefNid").toString().getBytes());
             return true;
         }
         catch (Exception e)
@@ -379,6 +442,7 @@ public class Profile implements SocializeContent
         data.put("connectionsRefNid", new String(this.connectionsRefNid.getId()));
         data.put("postsRefNid", new String(this.postsRefNid.getId()));
         data.put("userDataRefNid", new String(this.userDataRefNid.getId()));
+        data.put("connectionRequestsRefNid", new String(this.connectionRequestsRefNid.getId()));
         return new Gson().toJson(data);
     }
 
@@ -392,6 +456,7 @@ public class Profile implements SocializeContent
         data += "connectionsRefNid: " + new String(this.connectionsRefNid.getId()) + "\n";
         data += "postsRefNid: " + new String(this.postsRefNid.getId()) + "\n";
         data += "userDataRefNid: " + new String(this.userDataRefNid.getId()) + "\n";
+        data += "connectionRequestsRefNid: " + new String(this.connectionRequestsRefNid.getId()) + "\n";
 
         data += "************ PRINTING DATA END ************** ";
 

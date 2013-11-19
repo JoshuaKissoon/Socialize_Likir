@@ -32,7 +32,7 @@ public class SearchFrame extends JFrame implements ActionListener
 
     /* Main objects */
     private final SearchFrame frame = this;
-    private Node node;          // The node of the currently logged in user
+    private Profile cUserProfile;          // The node of the currently logged in user
 
     /* Frame Components */
     private JPanel mainPanel, resultsPanel;
@@ -41,11 +41,11 @@ public class SearchFrame extends JFrame implements ActionListener
     /* Form Components */
     private JTextField keywordTF;
     private JLabel label;
-    
-    public SearchFrame(Node iNode)
+
+    public SearchFrame(Profile iProfile)
     {
         /* Set the node to the input node */
-        this.node = iNode;
+        this.cUserProfile = iProfile;
 
         /* Create the UI */
         this.createGUI();
@@ -68,15 +68,15 @@ public class SearchFrame extends JFrame implements ActionListener
             @Override
             public void keyTyped(KeyEvent e)
             {
-                
+
             }
-            
+
             @Override
             public void keyPressed(KeyEvent e)
             {
-                
+
             }
-            
+
             @Override
             public void keyReleased(KeyEvent e)
             {
@@ -114,11 +114,11 @@ public class SearchFrame extends JFrame implements ActionListener
     public void search()
     {
         /* Search for the specified user */
-        
+
         Collection<StorageEntry> results = null;
         try
         {
-            results = node.get(Profile.generateKey(keywordTF.getText()), Profile.type, null, true, 5).get();
+            results = cUserProfile.getNode().get(Profile.generateKey(keywordTF.getText()), Profile.type, null, true, 5).get();
         }
         catch (InterruptedException | ExecutionException ie)
         {
@@ -144,7 +144,6 @@ public class SearchFrame extends JFrame implements ActionListener
         /* Refresh the frame */
         frame.repaint();
         frame.revalidate();
-        System.out.println("Search Ended");
     }
 
     /**
@@ -163,17 +162,16 @@ public class SearchFrame extends JFrame implements ActionListener
 
         /* Main Components */
         private Profile userProfile = null;
-        
+
         private UserDisplay(StorageEntry iProfileSE)
         {
             if (iProfileSE != null)
             {
-                userProfile = new Profile(new String(iProfileSE.getContent().getValue()));
-                
+                userProfile = new Profile(cUserProfile.getNode(), iProfileSE.getContent().getValue());
+
                 this.buildGUI();
-                System.out.println("Profile: " + userProfile);
             }
-            
+
         }
 
         /**
@@ -192,19 +190,27 @@ public class SearchFrame extends JFrame implements ActionListener
             btn = new JButton("Connect");
             btn.addActionListener(new ActionListener()
             {
-                
+
                 @Override
                 public void actionPerformed(ActionEvent e)
                 {
-                    /* When a user click connect to connect to another user, we create a new Relationship Object */
-                    Relationship r = new Relationship(node.getUserId(), userProfile.uid);
+                    /**
+                     * When a user click connect to connect to another user:
+                     * 1. We create a new Relationship Object and store it on the DHT
+                     * 3. Append o to the connections of the requester
+                     * 2. Append o to the connection requests object of the requestee
+                     */
+                    Relationship r = new Relationship(cUserProfile.getNode().getUserId(), userProfile.uid);
+
+                    /* Get the connections request object of the requestee */
+                    System.out.println(userProfile.getConnectionRequests());
                 }
             });
             gbc = getGBConstraints(0, 1);
             userPanel.add(btn, gbc);
         }
     }
-    
+
     private GridBagConstraints getGBConstraints(int x, int y)
     {
         GridBagConstraints c = new GridBagConstraints();
@@ -216,7 +222,7 @@ public class SearchFrame extends JFrame implements ActionListener
         c.weighty = 1.0;
         c.insets = new Insets(10, 10, 10, 10);
         c.anchor = GridBagConstraints.WEST;
-        
+
         return c;
     }
 
@@ -224,6 +230,6 @@ public class SearchFrame extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent aE)
     {
-        
+
     }
 }

@@ -40,7 +40,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
     private JPanel mainPanel, content, sidebar;
     private JPanel panel;
     private SocializeNode node;
-    private Profile profile;
+    private Profile cUserProfile;
 
     /* Menus */
     private JMenuBar menuBar;
@@ -101,19 +101,19 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         }
 
         /* Lets load the profile for this node */
-        profile = new Profile(node);
+        cUserProfile = new Profile(node, node.getUserId());
 
         /* Creates a new profile if the profile does not exist */
-        if (!profile.nodeProfileExists())
+        if (!cUserProfile.nodeProfileExists())
         {
             System.out.println("No profile Exists; lets create a new profile");
-            profile.createProfile();
+            cUserProfile.createProfile();
         }
         else
         {
             /* Profile Exist, load it */
             System.out.println("Profile Found, lets load it");
-            profile.loadProfile();
+            cUserProfile.loadProfile();
         }
 
         /* Schedule the node to update it's content every 5 minutes */
@@ -162,7 +162,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         content.setBorder(null);
 
         /* 4.1. Put the "Add Status Form" at the top of the content area */
-        panel = new StatusAddForm(profile);
+        panel = new StatusAddForm(cUserProfile);
         gbc = getItemConstraints(5, 5);
         content.add(panel, gbc);
 
@@ -202,7 +202,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         switch (event.getActionCommand())
         {
             case "friendSearch":
-                SearchFrame sf = new SearchFrame(node);
+                SearchFrame sf = new SearchFrame(cUserProfile);
                 sf.showGUI();
                 break;
         }
