@@ -23,8 +23,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import jk.socialize.content.Profile;
+import jk.socialize.objects.SocializeNode;
 import jk.socialize.system.Session;
-import unito.likir.Node;
 import unito.likir.settings.PropFinder;
 import unito.likir.settings.Settings;
 
@@ -39,7 +39,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
     private final JFrame frame = this;
     private JPanel mainPanel, content, sidebar;
     private JPanel panel;
-    private Node node;
+    private SocializeNode node;
     private Profile profile;
 
     /* Menus */
@@ -77,17 +77,17 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         {
             try
             {
-                node = new Node(f);
+                node = new SocializeNode(f);
             }
             catch (IOException ioe)
             {
                 ioe.printStackTrace();
-                node = new Node(userId);
+                node = new SocializeNode(userId);
             }
         }
         else
         {
-            node = new Node(userId);
+            node = new SocializeNode(userId);
         }
 
         try

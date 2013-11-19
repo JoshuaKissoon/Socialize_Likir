@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
+import jk.socialize.objects.SocializeNode;
 import unito.likir.Node;
 import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
@@ -23,7 +24,7 @@ public class Profile implements SocializeContent
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    private Node node;
+    private SocializeNode node;
 
     /* Reference objects references */
     private NodeId connectionsRefNid;      // The Node Id of the Connections Object with references to this user's connections
@@ -33,7 +34,7 @@ public class Profile implements SocializeContent
     /* Reference objects */
     private PostsReference postsReference = null;
 
-    public Profile(Node iNode)
+    public Profile(SocializeNode iNode)
     {
         /* Set the node */
         this.node = iNode;
@@ -104,10 +105,11 @@ public class Profile implements SocializeContent
         {
             System.out.println("Creating & Storing Connections Object.");
 
-            Connections connection = new Connections(this.uid);
-            int replica = node.put(connection.getKey(), connection.getValue(), connection.getType(), 360000000).get();
+            Connections connections = new Connections(this.uid);
+
+            int replica = node.storeLocallyAndUniversally(connections);
             System.out.println("Connection Object Stored at " + replica + " Replicas \n");
-            this.connectionsRefNid = connection.getKey();
+            this.connectionsRefNid = connections.getKey();
         }
         catch (Exception e)
         {
@@ -120,7 +122,7 @@ public class Profile implements SocializeContent
             System.out.println("Creating & Storing Posts Reference Object.");
 
             PostsReference pReferences = new PostsReference(this.uid);
-            int replica = node.put(pReferences.getKey(), pReferences.getValue(), pReferences.getType(), 360000000).get();
+            int replica = node.storeLocallyAndUniversally(pReferences);
             System.out.println("Post References Object Stored at " + replica + " Replicas \n");
             this.postsRefNid = pReferences.getKey();
         }
@@ -135,7 +137,7 @@ public class Profile implements SocializeContent
             System.out.println("Creating & Storing User Data Object.");
 
             UserData uData = new UserData(this.uid);
-            int replica = node.put(uData.getKey(), uData.getValue(), uData.getType(), 360000000).get();
+            int replica = node.storeLocallyAndUniversally(uData);
             System.out.println("User Data Object Stored at " + replica + " Replicas \n");
             this.userDataRefNid = uData.getKey();
         }
@@ -149,7 +151,7 @@ public class Profile implements SocializeContent
         {
             System.out.println("Storing the profile Object on the DHT. Key: " + this.getKey().toString());
 
-            int replica = node.put(this.getKey(), this.getValue(), this.getType(), 360000000).get();
+            int replica = node.storeLocallyAndUniversally(this);
             System.out.println("User Profile Object Stored at " + replica + " Replicas \n");
         }
         catch (Exception e)
@@ -395,7 +397,7 @@ public class Profile implements SocializeContent
 
         return data;
     }
-    
+
     @Override
     public long getTtl()
     {
