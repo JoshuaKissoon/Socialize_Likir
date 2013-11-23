@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import jk.socialize.content.SocializeContent;
 import unito.likir.Node;
-import unito.likir.NodeId;
 import unito.likir.io.ObservableFuture;
-import unito.likir.messages.dht.RPCMessage;
 import unito.likir.storage.StorageEntry;
 
 public class SocializeNode extends Node
@@ -79,7 +77,9 @@ public class SocializeNode extends Node
     public Integer storeLocallyAndUniversally(SocializeContent content) throws IOException, InterruptedException, ExecutionException
     {
         this.storeLocally(content);
+        System.out.println("Local Storage Successful");
         Integer replicas = this.put(content).get();
+        System.out.println("Foreign Storage Successful");
         return replicas;
     }
 }

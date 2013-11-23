@@ -98,7 +98,7 @@ public class Relationship implements SocializeContent
     }
 
     /**
-     * @return Returns the DHT key for this content type
+     * @return Returns the DHT key for this content
      */
     @Override
     public NodeId getKey()

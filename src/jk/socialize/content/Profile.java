@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 import jk.socialize.objects.SocializeNode;
-import unito.likir.Node;
 import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
 
@@ -19,12 +18,12 @@ public class Profile implements SocializeContent
 
     /* Attributes */
     private NodeId key;
-    public String uid = "";
+    private String uid = "";
     public static final String type = "profile";
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    private SocializeNode node;
+    private final SocializeNode node;
 
     /* Reference objects references */
     private NodeId connectionsRefNid;      // The Node Id of the Connections Object with references to this user's connections
@@ -38,7 +37,7 @@ public class Profile implements SocializeContent
 
     /**
      * @desc Constructor for a profile
-     * @param iNode Just some node on the network used within this profile to get data
+     * @param iNode   Just some node on the network used within this profile to get data
      * @param iUserId The user Id which this profile is for
      */
     public Profile(SocializeNode iNode, String iUserId)
@@ -57,7 +56,7 @@ public class Profile implements SocializeContent
     {
         /* Set the node */
         this.node = iNode;
-        
+
         /* Here we load the profile from it's json data */
         this.loadData(iData);
     }
@@ -156,6 +155,7 @@ public class Profile implements SocializeContent
             System.out.println("Creating & Storing User ConnectionsRequest Object.");
 
             ConnectionRequests connRequests = new ConnectionRequests(this.uid);
+            System.out.println(connRequests);
             int replica = node.storeLocallyAndUniversally(connRequests);
             System.out.println("ConnectionRequests Object Stored at " + replica + " Replicas \n");
             this.connectionRequestsRefNid = connRequests.getKey();
@@ -268,9 +268,9 @@ public class Profile implements SocializeContent
     /* PROFILE GETTERS AND SETTERS */
     public void setNode()
     {
-        
+
     }
-    
+
     public SocializeNode getNode()
     {
         return this.node;
@@ -350,7 +350,15 @@ public class Profile implements SocializeContent
         return this.connectionRequests;
     }
 
+    /**
+     * @return The user id of the user that owns this profile
+     */
+    public String getUid()
+    {
+        return this.uid;
+    }
     /* METHODS FOR THE "SocializeContent" INTERFACE */
+
     /**
      * @return Returns the data (the raw bytes) of the content
      *
@@ -446,7 +454,13 @@ public class Profile implements SocializeContent
         return new Gson().toJson(data);
     }
 
-    /* Java Common Methods */
+    @Override
+    public long getTtl()
+    {
+        return this.ttl;
+    }
+
+    /* JAVA COMMON METHODS */
     @Override
     public String toString()
     {
@@ -461,11 +475,5 @@ public class Profile implements SocializeContent
         data += "************ PRINTING DATA END ************** ";
 
         return data;
-    }
-
-    @Override
-    public long getTtl()
-    {
-        return this.ttl;
     }
 }

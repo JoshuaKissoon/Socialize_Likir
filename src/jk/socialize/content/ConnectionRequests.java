@@ -1,7 +1,6 @@
 package jk.socialize.content;
 
 import com.google.gson.Gson;
-import java.util.ArrayList;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
@@ -20,16 +19,16 @@ public class ConnectionRequests implements SocializeContent, Reference
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    ArrayList<NodeId> relationships = new ArrayList<>();  // An Arraylist to manage the NodeIds of the Relationship Objects
+    HashMap<String, NodeId> requests = new HashMap<>();  // An Arraylist to manage the NodeIds of the Relationship Objects
 
     /**
      * @desc Allow initialization of blank object if it's filled from data
      */
     public ConnectionRequests()
     {
-        
+
     }
-    
+
     public ConnectionRequests(String iOwnerUid)
     {
         /* Set the uid of the owner of this content */
@@ -39,10 +38,15 @@ public class ConnectionRequests implements SocializeContent, Reference
         this.generateKey();
     }
 
-    public void addConnectionRequest(NodeId relationshipNid)
+    /**
+     * @desc Add a new connection request for this user
+     * @param userId          The user Id of the user that sent this request
+     * @param relationshipNid The node if of the relationship object for this user
+     */
+    public void addConnectionRequest(String userId, NodeId relationshipNid)
     {
-        /* Add a new connection for this user */
-        this.relationships.add(relationshipNid);
+        /* Add a new connection request for this user */
+        this.requests.put(userId, relationshipNid);
     }
 
     /**
@@ -124,8 +128,10 @@ public class ConnectionRequests implements SocializeContent, Reference
         {
             Gson gson = new Gson();
             HashMap data = gson.fromJson(jsonString, HashMap.class);
-            this.relationships = gson.fromJson(data.get("relationships").toString(), ArrayList.class);
+            this.requests = gson.fromJson(data.get("requests").toString(), HashMap.class);
+            System.out.println("Current Requests: " + this.requests);
             this.uid = data.get("uid").toString();
+            this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
         catch (Exception e)
@@ -158,9 +164,10 @@ public class ConnectionRequests implements SocializeContent, Reference
     {
         HashMap<String, String> data = new HashMap(3);
         Gson gson = new Gson();
-        data.put("relationships", gson.toJson(this.relationships));
+        data.put("requests", gson.toJson(this.requests));
         data.put("uid", this.uid);
         data.put("type", this.type);
+        data.put("key", new String(this.key.getId()));
         return gson.toJson(data);
     }
 
@@ -168,5 +175,19 @@ public class ConnectionRequests implements SocializeContent, Reference
     public long getTtl()
     {
         return this.ttl;
+    }
+
+    /* Java Common Methods */
+    @Override
+    public String toString()
+    {
+        String data = "************ PRINTING Connection Requests START ************** \n ";
+
+        data += "Key: " + new String(this.key.getId()) + "\n";
+        data += "Requests: " + this.requests.toString() + "\n";
+
+        data += "************ PRINTING DATA END ************** \n\n";
+
+        return data;
     }
 }

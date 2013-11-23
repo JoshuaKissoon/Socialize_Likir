@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
@@ -17,9 +18,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import jk.socialize.content.ConnectionRequests;
 import jk.socialize.content.Profile;
 import jk.socialize.content.Relationship;
-import unito.likir.Node;
+import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
 
 /**
@@ -182,7 +184,7 @@ public class SearchFrame extends JFrame implements ActionListener
             userPanel.setLayout(new GridBagLayout());
 
             /* User's uid */
-            lbl = new JLabel(userProfile.uid);
+            lbl = new JLabel(userProfile.getUid());
             gbc = getGBConstraints(0, 0);
             userPanel.add(lbl, gbc);
 
@@ -200,10 +202,26 @@ public class SearchFrame extends JFrame implements ActionListener
                      * 3. Append o to the connections of the requester
                      * 2. Append o to the connection requests object of the requestee
                      */
-                    Relationship r = new Relationship(cUserProfile.getNode().getUserId(), userProfile.uid);
+                    Relationship r = new Relationship(cUserProfile.getNode().getUserId(), userProfile.getUid());
+                    cUserProfile.getNode().put(r);
 
                     /* Get the connections request object of the requestee */
-                    System.out.println(userProfile.getConnectionRequests());
+                    ConnectionRequests userCr = userProfile.getConnectionRequests();
+                    System.out.println(userCr);
+                    userCr.addConnectionRequest(cUserProfile.getUid(), r.getKey());
+
+                    try
+                    {
+                        cUserProfile.getNode().storeLocallyAndUniversally(userCr);
+                    }
+                    catch (IOException | InterruptedException | ExecutionException ioe)
+                    {
+                        ioe.printStackTrace();
+                    }
+
+                    /* Lets get the connection requests again and see if it's updated */
+                    ConnectionRequests userCr2 = userProfile.getConnectionRequests();
+                    System.out.println(userCr2);
                 }
             });
             gbc = getGBConstraints(0, 1);
