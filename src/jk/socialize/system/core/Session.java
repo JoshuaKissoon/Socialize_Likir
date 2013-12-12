@@ -1,4 +1,4 @@
-package jk.socialize.system;
+package jk.socialize.system.core;
 
 /**
  * @author Joshua Kissoon

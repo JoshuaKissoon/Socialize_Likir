@@ -1,4 +1,4 @@
-package jk.socialize.ui;
+package jk.socialize.theme;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,9 +22,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import jk.socialize.content.Profile;
-import jk.socialize.objects.SocializeNode;
-import jk.socialize.system.Session;
+import jk.socialize.system.core.content.Profile;
+import jk.socialize.system.abstraction.SocializeNode;
+import jk.socialize.system.core.Session;
 import unito.likir.settings.PropFinder;
 import unito.likir.settings.Settings;
 

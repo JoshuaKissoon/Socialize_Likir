@@ -1,4 +1,4 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
@@ -6,47 +6,29 @@ import unito.likir.NodeId;
 
 /**
  * @author Joshua Kissoon
- * @date 20131025
- * @description A class that holds references to all Connection Requests of a user
+ * @description A simple class that stores a relationship between the owner of the relationship object and another user
+ * @date 20131024
  */
-public class ConnectionRequests implements SocializeContent, Reference
+public class Relationship implements SocializeContent
 {
 
-    /* Class Attributes */
-    public static String type = "ConnectionRequests";
-    private String uid;
+    /* Attributes */
+    private String uid;     // The DHT user's ID that owns this relationhsip
+    private String connectionUid;   // The person who this user is now connected to
     private NodeId key;
+    private final String type = "Relationship";
     private final long ttl = 999999999999l;
 
-    /* Main Objects */
-    HashMap<String, NodeId> requests = new HashMap<>();  // An Arraylist to manage the NodeIds of the Relationship Objects
-
-    /**
-     * @desc Allow initialization of blank object if it's filled from data
-     */
-    public ConnectionRequests()
+    public Relationship(String iOwnerUid, String iConnectionUid)
     {
-
-    }
-
-    public ConnectionRequests(String iOwnerUid)
-    {
-        /* Set the uid of the owner of this content */
+        /* Set the owner of this relationship */
         this.uid = iOwnerUid;
+        
+        /* Set the connection */
+        this.connectionUid = iConnectionUid;
 
-        /* Generate a key for this content */
+        /* Generate a key for this relationship */
         this.generateKey();
-    }
-
-    /**
-     * @desc Add a new connection request for this user
-     * @param userId          The user Id of the user that sent this request
-     * @param relationshipNid The node if of the relationship object for this user
-     */
-    public void addConnectionRequest(String userId, NodeId relationshipNid)
-    {
-        /* Add a new connection request for this user */
-        this.requests.put(userId, relationshipNid);
     }
 
     /**
@@ -55,19 +37,22 @@ public class ConnectionRequests implements SocializeContent, Reference
      */
     private void generateKey()
     {
-        /* First 10 characters of the user's uid */
-        String keyValue = this.uid.substring(0, Math.min(this.uid.length(), 10));
+        /* First 10 characters are the timestamp */
+        String keyValue = String.valueOf((System.currentTimeMillis() / 1000L));
 
-        /* The key contains the words user data */
-        keyValue += "_conn_refs";
+        /* Append an underscore */
+        keyValue += "_";
 
-        /* If the string still does not meet the required length, pad it with Ds */
+        /* Last 9 characters are from the UID */
+        keyValue += uid.substring(0, Math.min(uid.length(), 9));
+
+        /* If the string still does not meet the required length, pad it with "R"s */
         Integer strLength = keyValue.length();
         if (strLength < NodeId.LENGTH)
         {
             for (Integer t = 0; t < NodeId.LENGTH - strLength; t++)
             {
-                keyValue += "C";
+                keyValue += "R";
             }
         }
 
@@ -75,10 +60,17 @@ public class ConnectionRequests implements SocializeContent, Reference
         this.key = new NodeId(keyValue.getBytes());
     }
 
+    /**
+     * @return the DHT user ID of the user that owns this relationship
+     */
+    public String getOwnerUid()
+    {
+        return this.uid;
+    }
     /* CREATING THE NECESSARY METHODS SPECIFIED BY THE 'SocializeContent' INTERFACE */
+
     /**
      * @return Returns the data (the raw bytes) of the content
-     *
      * @description Here we return a byte array of the data to be stored on the DHT
      */
     @Override
@@ -106,7 +98,7 @@ public class ConnectionRequests implements SocializeContent, Reference
     }
 
     /**
-     * @return Returns the DHT key for this content type
+     * @return Returns the DHT key for this content
      */
     @Override
     public NodeId getKey()
@@ -116,9 +108,7 @@ public class ConnectionRequests implements SocializeContent, Reference
 
     /**
      * @param jsonString A Json string with the data of this object
-     *
      * @return Returns whether the data was successfully loaded or not
-     *
      * @description Here we load data from the DHT into the object
      */
     @Override
@@ -126,26 +116,21 @@ public class ConnectionRequests implements SocializeContent, Reference
     {
         try
         {
-            Gson gson = new Gson();
-            HashMap data = gson.fromJson(jsonString, HashMap.class);
-            this.requests = gson.fromJson(data.get("requests").toString(), HashMap.class);
-            System.out.println("Current Requests: " + this.requests);
+            HashMap data = new Gson().fromJson(jsonString, HashMap.class);
+            this.connectionUid = data.get("connectionUid").toString();
             this.uid = data.get("uid").toString();
-            this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
         catch (Exception e)
         {
-            System.err.println("Unable to load the connection requests for this connection requests object.");
+            System.err.println("Unable to load data for the status from it's json object.");
             return false;
         }
     }
 
     /**
      * @param data A byte array of data returned from the DHT
-     *
      * @return Returns whether the data was successfully loaded or not
-     *
      * @description Here we load the data from the DHT into the object
      */
     @Override
@@ -156,38 +141,20 @@ public class ConnectionRequests implements SocializeContent, Reference
 
     /**
      * @return Returns the data needed to be stored encoded in Json form
-     *
      * @description Here we build a Hash Map with this status object's data and then return the Json version
      */
     @Override
     public String getJsonEncodedData()
     {
         HashMap<String, String> data = new HashMap(3);
-        Gson gson = new Gson();
-        data.put("requests", gson.toJson(this.requests));
+        data.put("connectionUid", this.connectionUid);
         data.put("uid", this.uid);
-        data.put("type", this.type);
-        data.put("key", new String(this.key.getId()));
-        return gson.toJson(data);
+        return new Gson().toJson(data);
     }
-
+    
     @Override
     public long getTtl()
     {
         return this.ttl;
-    }
-
-    /* Java Common Methods */
-    @Override
-    public String toString()
-    {
-        String data = "************ PRINTING Connection Requests START ************** \n ";
-
-        data += "Key: " + new String(this.key.getId()) + "\n";
-        data += "Requests: " + this.requests.toString() + "\n";
-
-        data += "************ PRINTING DATA END ************** \n\n";
-
-        return data;
     }
 }

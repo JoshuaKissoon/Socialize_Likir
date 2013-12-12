@@ -1,10 +1,10 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-import jk.socialize.objects.SocializeNode;
+import jk.socialize.system.abstraction.SocializeNode;
 import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
 

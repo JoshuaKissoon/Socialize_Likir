@@ -1,4 +1,4 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import unito.likir.NodeId;
 import unito.likir.storage.Content;

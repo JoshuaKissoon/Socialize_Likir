@@ -1,7 +1,7 @@
 package jk.socialize;
 
-import jk.socialize.ui.Login;
-import jk.socialize.ui.Socialize;
+import jk.socialize.theme.Login;
+import jk.socialize.theme.Socialize;
 
 /**
  * @author Joshua Kissoon

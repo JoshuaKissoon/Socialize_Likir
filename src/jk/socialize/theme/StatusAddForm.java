@@ -1,4 +1,4 @@
-package jk.socialize.ui;
+package jk.socialize.theme;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -7,8 +7,8 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
-import jk.socialize.content.Profile;
-import jk.socialize.content.Status;
+import jk.socialize.system.core.content.Profile;
+import jk.socialize.system.core.content.Status;
 import unito.likir.Node;
 
 /**

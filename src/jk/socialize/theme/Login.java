@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jk.socialize.ui;
+package jk.socialize.theme;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import jk.socialize.system.Session;
+import jk.socialize.system.core.Session;
 
 /**
  *

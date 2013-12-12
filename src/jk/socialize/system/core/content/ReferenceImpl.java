@@ -1,4 +1,4 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.HashMap;

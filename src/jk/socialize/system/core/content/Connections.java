@@ -1,34 +1,40 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
 /**
+ *
  * @author Joshua Kissoon
- * @description A simple class that stores a relationship between the owner of the relationship object and another user
  * @date 20131024
+ * @description A class that holds references to all Relationships of a user
  */
-public class Relationship implements SocializeContent
+public class Connections implements SocializeContent, Reference
 {
 
-    /* Attributes */
-    private String uid;     // The DHT user's ID that owns this relationhsip
-    private String connectionUid;   // The person who this user is now connected to
+    /* Class Attributes */
+    private final String type = "Connections";
+    private String uid;
     private NodeId key;
-    private final String type = "Relationship";
     private final long ttl = 999999999999l;
 
-    public Relationship(String iOwnerUid, String iConnectionUid)
-    {
-        /* Set the owner of this relationship */
-        this.uid = iOwnerUid;
-        
-        /* Set the connection */
-        this.connectionUid = iConnectionUid;
+    /* Main Objects */
+    HashMap<String, String> connections = new HashMap<>();  // A Hashmap<Connection userId, Relationship Object NodeId> to store the connections
 
-        /* Generate a key for this relationship */
+    public Connections(String iOwnerUid)
+    {
+        /* Set the uid of the owner of this content */
+        this.uid = iOwnerUid;
+
+        /* Generate a key for this content */
         this.generateKey();
+    }
+
+    public void addConnection(Relationship iRelationship)
+    {
+        /* Add a new connection for this user */
+        this.connections.put(iRelationship.getOwnerUid(), new String(iRelationship.getKey().getId()));
     }
 
     /**
@@ -37,22 +43,19 @@ public class Relationship implements SocializeContent
      */
     private void generateKey()
     {
-        /* First 10 characters are the timestamp */
-        String keyValue = String.valueOf((System.currentTimeMillis() / 1000L));
+        /* First 10 characters of the user's uid */
+        String keyValue = this.uid.substring(0, Math.min(this.uid.length(), 10));
 
-        /* Append an underscore */
-        keyValue += "_";
+        /* The key contains the words user data */
+        keyValue += "_conn_refs";
 
-        /* Last 9 characters are from the UID */
-        keyValue += uid.substring(0, Math.min(uid.length(), 9));
-
-        /* If the string still does not meet the required length, pad it with "R"s */
+        /* If the string still does not meet the required length, pad it with Ds */
         Integer strLength = keyValue.length();
         if (strLength < NodeId.LENGTH)
         {
             for (Integer t = 0; t < NodeId.LENGTH - strLength; t++)
             {
-                keyValue += "R";
+                keyValue += "C";
             }
         }
 
@@ -60,17 +63,10 @@ public class Relationship implements SocializeContent
         this.key = new NodeId(keyValue.getBytes());
     }
 
-    /**
-     * @return the DHT user ID of the user that owns this relationship
-     */
-    public String getOwnerUid()
-    {
-        return this.uid;
-    }
     /* CREATING THE NECESSARY METHODS SPECIFIED BY THE 'SocializeContent' INTERFACE */
-
     /**
      * @return Returns the data (the raw bytes) of the content
+     *
      * @description Here we return a byte array of the data to be stored on the DHT
      */
     @Override
@@ -98,7 +94,7 @@ public class Relationship implements SocializeContent
     }
 
     /**
-     * @return Returns the DHT key for this content
+     * @return Returns the DHT key for this content type
      */
     @Override
     public NodeId getKey()
@@ -108,7 +104,9 @@ public class Relationship implements SocializeContent
 
     /**
      * @param jsonString A Json string with the data of this object
+     *
      * @return Returns whether the data was successfully loaded or not
+     *
      * @description Here we load data from the DHT into the object
      */
     @Override
@@ -116,8 +114,9 @@ public class Relationship implements SocializeContent
     {
         try
         {
-            HashMap data = new Gson().fromJson(jsonString, HashMap.class);
-            this.connectionUid = data.get("connectionUid").toString();
+            Gson gson = new Gson();
+            HashMap data = gson.fromJson(jsonString, HashMap.class);
+            this.connections = gson.fromJson(data.get("connections").toString(), HashMap.class);
             this.uid = data.get("uid").toString();
             return true;
         }
@@ -130,7 +129,9 @@ public class Relationship implements SocializeContent
 
     /**
      * @param data A byte array of data returned from the DHT
+     *
      * @return Returns whether the data was successfully loaded or not
+     *
      * @description Here we load the data from the DHT into the object
      */
     @Override
@@ -141,15 +142,18 @@ public class Relationship implements SocializeContent
 
     /**
      * @return Returns the data needed to be stored encoded in Json form
+     *
      * @description Here we build a Hash Map with this status object's data and then return the Json version
      */
     @Override
     public String getJsonEncodedData()
     {
         HashMap<String, String> data = new HashMap(3);
-        data.put("connectionUid", this.connectionUid);
+        Gson gson = new Gson();
+        data.put("connections", gson.toJson(this.connections));
         data.put("uid", this.uid);
-        return new Gson().toJson(data);
+        data.put("type", this.type);
+        return gson.toJson(data);
     }
     
     @Override

@@ -1,4 +1,4 @@
-package jk.socialize.ui;
+package jk.socialize.theme;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -18,9 +18,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import jk.socialize.content.ConnectionRequests;
-import jk.socialize.content.Profile;
-import jk.socialize.content.Relationship;
+import jk.socialize.system.core.content.ConnectionRequests;
+import jk.socialize.system.core.content.Profile;
+import jk.socialize.system.core.content.Relationship;
 import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
 

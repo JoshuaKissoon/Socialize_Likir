@@ -1,4 +1,4 @@
-package jk.socialize.workers;
+package jk.socialize.temp;
 
 import java.io.IOException;
 import java.util.Collection;

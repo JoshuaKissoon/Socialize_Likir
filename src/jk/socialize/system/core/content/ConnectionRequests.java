@@ -1,30 +1,35 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
 /**
- *
  * @author Joshua Kissoon
- * @date 20131024
- * @description A class that holds references to all different types of posts made by a user
- * - Posts: Status, Photo, Video
- * - References are sorted in chronological order
+ * @date 20131025
+ * @description A class that holds references to all Connection Requests of a user
  */
-public class PostsReference implements SocializeContent, Reference
+public class ConnectionRequests implements SocializeContent, Reference
 {
 
     /* Class Attributes */
-    public static final String type = "PostsReferences";
+    public static String type = "ConnectionRequests";
     private String uid;
     private NodeId key;
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    HashMap<String, NodeId> references = new HashMap<>();  // A Hashmap<String date, Relationship Object NodeId> to store the connections
+    HashMap<String, NodeId> requests = new HashMap<>();  // An Arraylist to manage the NodeIds of the Relationship Objects
 
-    public PostsReference(String iOwnerUid)
+    /**
+     * @desc Allow initialization of blank object if it's filled from data
+     */
+    public ConnectionRequests()
+    {
+
+    }
+
+    public ConnectionRequests(String iOwnerUid)
     {
         /* Set the uid of the owner of this content */
         this.uid = iOwnerUid;
@@ -33,15 +38,15 @@ public class PostsReference implements SocializeContent, Reference
         this.generateKey();
     }
 
-    public void addReference(String iDate, NodeId iKey)
+    /**
+     * @desc Add a new connection request for this user
+     * @param userId          The user Id of the user that sent this request
+     * @param relationshipNid The node if of the relationship object for this user
+     */
+    public void addConnectionRequest(String userId, NodeId relationshipNid)
     {
-        /* Add a new connection for this user */
-        this.references.put(iDate, iKey);
-    }
-
-    public HashMap<String, NodeId> getReferences()
-    {
-        return this.references;
+        /* Add a new connection request for this user */
+        this.requests.put(userId, relationshipNid);
     }
 
     /**
@@ -54,7 +59,7 @@ public class PostsReference implements SocializeContent, Reference
         String keyValue = this.uid.substring(0, Math.min(this.uid.length(), 10));
 
         /* The key contains the words user data */
-        keyValue += "_posts_ref";
+        keyValue += "_conn_refs";
 
         /* If the string still does not meet the required length, pad it with Ds */
         Integer strLength = keyValue.length();
@@ -62,7 +67,7 @@ public class PostsReference implements SocializeContent, Reference
         {
             for (Integer t = 0; t < NodeId.LENGTH - strLength; t++)
             {
-                keyValue += "R";
+                keyValue += "C";
             }
         }
 
@@ -123,12 +128,15 @@ public class PostsReference implements SocializeContent, Reference
         {
             Gson gson = new Gson();
             HashMap data = gson.fromJson(jsonString, HashMap.class);
-            this.references = gson.fromJson(data.get("references").toString(), HashMap.class);
+            this.requests = gson.fromJson(data.get("requests").toString(), HashMap.class);
+            System.out.println("Current Requests: " + this.requests);
+            this.uid = data.get("uid").toString();
+            this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
         catch (Exception e)
         {
-            System.err.println("Unable to load post references from the json object.");
+            System.err.println("Unable to load the connection requests for this connection requests object.");
             return false;
         }
     }
@@ -156,15 +164,30 @@ public class PostsReference implements SocializeContent, Reference
     {
         HashMap<String, String> data = new HashMap(3);
         Gson gson = new Gson();
-        data.put("references", gson.toJson(this.references));
+        data.put("requests", gson.toJson(this.requests));
         data.put("uid", this.uid);
         data.put("type", this.type);
+        data.put("key", new String(this.key.getId()));
         return gson.toJson(data);
     }
-    
+
     @Override
     public long getTtl()
     {
         return this.ttl;
+    }
+
+    /* Java Common Methods */
+    @Override
+    public String toString()
+    {
+        String data = "************ PRINTING Connection Requests START ************** \n ";
+
+        data += "Key: " + new String(this.key.getId()) + "\n";
+        data += "Requests: " + this.requests.toString() + "\n";
+
+        data += "************ PRINTING DATA END ************** \n\n";
+
+        return data;
     }
 }

@@ -1,40 +1,37 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
 /**
- *
  * @author Joshua Kissoon
- * @date 20131024
- * @description A class that holds references to all Relationships of a user
+ * @description A simple class that stores a connection request from one user to the other
+ * @date 20131025
  */
-public class Connections implements SocializeContent, Reference
+public class ConnectionRequest implements SocializeContent
 {
 
-    /* Class Attributes */
-    private final String type = "Connections";
-    private String uid;
+    /* Attributes */
+    private String uid;     // The DHT user's ID that owns this object
+    private String requestee;   // The person who the request is for
     private NodeId key;
+    private final String type = "ConnectionRequest";
     private final long ttl = 999999999999l;
+    private Integer status = 0;
 
-    /* Main Objects */
-    HashMap<String, String> connections = new HashMap<>();  // A Hashmap<Connection userId, Relationship Object NodeId> to store the connections
+    /* Static variables */
+    public static final Integer CR_STATUS_PENDING = 0;
+    public static final Integer CR_STATUS_APPROVED = 1;
 
-    public Connections(String iOwnerUid)
+    public ConnectionRequest(String iOwnerUid, String iRequesteeUid)
     {
-        /* Set the uid of the owner of this content */
+        /* Set the owner of this relationship */
         this.uid = iOwnerUid;
+        this.requestee = iRequesteeUid;
 
-        /* Generate a key for this content */
+        /* Generate a key for this relationship */
         this.generateKey();
-    }
-
-    public void addConnection(Relationship iRelationship)
-    {
-        /* Add a new connection for this user */
-        this.connections.put(iRelationship.getOwnerUid(), new String(iRelationship.getKey().getId()));
     }
 
     /**
@@ -43,19 +40,22 @@ public class Connections implements SocializeContent, Reference
      */
     private void generateKey()
     {
-        /* First 10 characters of the user's uid */
-        String keyValue = this.uid.substring(0, Math.min(this.uid.length(), 10));
+        /* First 10 characters are the timestamp */
+        String keyValue = String.valueOf((System.currentTimeMillis() / 1000L));
 
-        /* The key contains the words user data */
-        keyValue += "_conn_refs";
+        /* Append an underscore */
+        keyValue += "_";
 
-        /* If the string still does not meet the required length, pad it with Ds */
+        /* Last 9 characters are from the UID */
+        keyValue += uid.substring(0, Math.min(uid.length(), 9));
+
+        /* If the string still does not meet the required length, pad it with "R"s */
         Integer strLength = keyValue.length();
         if (strLength < NodeId.LENGTH)
         {
             for (Integer t = 0; t < NodeId.LENGTH - strLength; t++)
             {
-                keyValue += "C";
+                keyValue += "K";
             }
         }
 
@@ -63,7 +63,15 @@ public class Connections implements SocializeContent, Reference
         this.key = new NodeId(keyValue.getBytes());
     }
 
+    /**
+     * @return the DHT user ID of the user that owns this relationship
+     */
+    public String getOwnerUid()
+    {
+        return this.uid;
+    }
     /* CREATING THE NECESSARY METHODS SPECIFIED BY THE 'SocializeContent' INTERFACE */
+
     /**
      * @return Returns the data (the raw bytes) of the content
      *
@@ -114,15 +122,15 @@ public class Connections implements SocializeContent, Reference
     {
         try
         {
-            Gson gson = new Gson();
-            HashMap data = gson.fromJson(jsonString, HashMap.class);
-            this.connections = gson.fromJson(data.get("connections").toString(), HashMap.class);
+            HashMap data = new Gson().fromJson(jsonString, HashMap.class);
+            this.requestee = data.get("requestee").toString();
             this.uid = data.get("uid").toString();
+            this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
         catch (Exception e)
         {
-            System.err.println("Unable to load data for the status from it's json object.");
+            System.err.println("Unable to load data for the connection request from it's json object.");
             return false;
         }
     }
@@ -149,11 +157,10 @@ public class Connections implements SocializeContent, Reference
     public String getJsonEncodedData()
     {
         HashMap<String, String> data = new HashMap(3);
-        Gson gson = new Gson();
-        data.put("connections", gson.toJson(this.connections));
+        data.put("requestee", this.requestee);
+        data.put("key", new String(this.key.getId()));
         data.put("uid", this.uid);
-        data.put("type", this.type);
-        return gson.toJson(data);
+        return new Gson().toJson(data);
     }
     
     @Override

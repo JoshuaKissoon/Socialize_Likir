@@ -3,12 +3,12 @@
  * @date 20131119
  * @desc A node class that is an extension of the Likir Node to provide Socialize functionality
  */
-package jk.socialize.objects;
+package jk.socialize.system.abstraction;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import jk.socialize.content.SocializeContent;
+import jk.socialize.system.core.content.SocializeContent;
 import unito.likir.Node;
 import unito.likir.io.ObservableFuture;
 import unito.likir.storage.StorageEntry;

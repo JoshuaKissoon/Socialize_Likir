@@ -1,4 +1,4 @@
-package jk.socialize.content;
+package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import java.util.HashMap;
@@ -6,30 +6,26 @@ import unito.likir.NodeId;
 
 /**
  * @author Joshua Kissoon
- * @date 20131024
- * @description A Content type that stores the data of a user
+ * @date 20131023
+ * @description The status content type
  */
-public class UserData implements SocializeContent
+public class Status implements SocializeContent
 {
 
     /* Attributes */
     private String status;
     private NodeId key;
     private String uid;
-    private final String type = "UserData";
+    private final String type = "status";
     private final long ttl = 999999999999l;
 
-    /* Storage Objects */
-    HashMap<String, Object> userData = new HashMap<>();
-
-    /* Constants that represent the different data stored */
-    public static String DATA_USERNAME = "username";
-    public static String DATA_FIRST_NAMW = "first_name";
-    
-    public UserData(String iOwnerUid)
+    public Status(String iStatus, String iUserId)
     {
+        /* Set the status value */
+        this.status = iStatus;
+
         /* Set the userId */
-        this.uid = iOwnerUid;
+        this.uid = iUserId;
 
         /* Setup the status key here */
         this.generateKey();
@@ -41,35 +37,24 @@ public class UserData implements SocializeContent
      */
     private void generateKey()
     {
-        /* First 10 characters of the user's uid */
-        String keyValue = this.uid.substring(0, Math.min(this.uid.length(), 10));
-        
-        /* The key contains the words user data */
-        keyValue += "_user_data";
+        /* First 10 characters are the timestamp */
+        String keyValue = String.valueOf((System.currentTimeMillis() / 1000L));
 
-        /* If the string still does not meet the required length, pad it with Ds */
+        /* Append an underscore */
+        keyValue += "_status";
+
+        /* If the string still does not meet the required length, pad it with zeroes */
         Integer strLength = keyValue.length();
         if (strLength < NodeId.LENGTH)
         {
             for (Integer t = 0; t < NodeId.LENGTH - strLength; t++)
             {
-                keyValue += "D";
+                keyValue += "S";
             }
         }
 
         /* Set this key to a new NodeId object */
         this.key = new NodeId(keyValue.getBytes());
-    }
-
-    /* GETTER AND SETTER METHODS TO MANIPULATE DATA */
-    public Object getData(String iDataKey)
-    {
-        return this.userData.get(iDataKey);
-    }
-
-    public Object putData(String iDataKey, Object iData)
-    {
-        return this.userData.put(iDataKey, iData);
     }
 
     /**
@@ -119,9 +104,8 @@ public class UserData implements SocializeContent
     {
         try
         {
-            Gson gson = new Gson();
-            HashMap data = gson.fromJson(jsonString, HashMap.class);
-            this.userData = gson.fromJson(data.get("data").toString(), HashMap.class);
+            HashMap data = new Gson().fromJson(jsonString, HashMap.class);
+            this.status = data.get("status").toString();
             this.uid = data.get("uid").toString();
             return true;
         }
@@ -150,11 +134,10 @@ public class UserData implements SocializeContent
     @Override
     public String getJsonEncodedData()
     {
-        Gson gson = new Gson();
         HashMap<String, String> data = new HashMap(3);
-        data.put("data", gson.toJson(this.userData));
+        data.put("status", this.status);
         data.put("uid", this.uid);
-        return gson.toJson(data);
+        return new Gson().toJson(data);
     }
     
     @Override
