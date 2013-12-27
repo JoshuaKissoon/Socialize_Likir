@@ -25,6 +25,7 @@ import javax.swing.JScrollPane;
 import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.abstraction.SocializeNode;
 import jk.socialize.system.core.Session;
+import jk.socialize.system.core.content.ConnectionRequests;
 import unito.likir.settings.PropFinder;
 import unito.likir.settings.Settings;
 
@@ -114,9 +115,12 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
             /* Profile Exist, load it */
             System.out.println("Profile Found, lets load it");
             cUserProfile.loadProfile();
+            /* Lets get the connection requests again and see if it's updated */
+            ConnectionRequests userCr = cUserProfile.getConnectionRequests();
+            System.out.println(userCr);
         }
 
-        /* Schedule the node to update it's content every 5 minutes */
+        /* Schedule the node to update it's content every 2 minutes */
         scheduledExecutor.schedule(node.getStorageCleaner(), 2, TimeUnit.MINUTES);
     }
 
@@ -148,6 +152,16 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         menuItem = new JMenuItem("Find Friends");
         menuItem.addActionListener(this);
         menuItem.setActionCommand("friendSearch");
+        menu.add(menuItem);
+
+        menuBar.add(menu);
+        
+        /* Help Menu */
+        menu = new JMenu("Help");
+
+        menuItem = new JMenuItem("Print Node Storage");
+        menuItem.addActionListener(this);
+        menuItem.setActionCommand("printNodeStorage");
         menu.add(menuItem);
 
         menuBar.add(menu);
@@ -202,8 +216,12 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         switch (event.getActionCommand())
         {
             case "friendSearch":
-                SearchFrame sf = new SearchFrame(cUserProfile);
+                FriendSearchFrame sf = new FriendSearchFrame(cUserProfile);
                 sf.showGUI();
+                break;
+            case "printNodeStorage":
+                System.out.println("\n*****************************  Printing Node Storage  ***************************************\n");
+                System.out.println(this.node.getStorage().toString());
                 break;
         }
     }

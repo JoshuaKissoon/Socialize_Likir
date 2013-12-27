@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import jk.socialize.system.core.content.ConnectionRequests;
+import jk.socialize.system.core.content.Connections;
 import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.core.content.Relationship;
 import unito.likir.NodeId;
@@ -29,12 +30,12 @@ import unito.likir.storage.StorageEntry;
  * @description A class that generates a search frame to allow the user to search for content
  * @date 20131025
  */
-public class SearchFrame extends JFrame implements ActionListener
+public class FriendSearchFrame extends JFrame implements ActionListener
 {
 
     /* Main objects */
-    private final SearchFrame frame = this;
-    private Profile cUserProfile;          // The node of the currently logged in user
+    private FriendSearchFrame frame = this;
+    private final Profile cUserProfile;          // The node of the currently logged in user
 
     /* Frame Components */
     private JPanel mainPanel, resultsPanel;
@@ -44,7 +45,7 @@ public class SearchFrame extends JFrame implements ActionListener
     private JTextField keywordTF;
     private JLabel label;
 
-    public SearchFrame(Profile iProfile)
+    public FriendSearchFrame(Profile iProfile)
     {
         /* Set the node to the input node */
         this.cUserProfile = iProfile;
@@ -198,29 +199,28 @@ public class SearchFrame extends JFrame implements ActionListener
                 {
                     /**
                      * When a user click connect to connect to another user:
-                     * 1. We create a new Relationship Object and store it on the DHT
-                     * 3. Append o to the connections of the requester
-                     * 2. Append o to the connection requests object of the requestee
+                     * 1. We create a new Relationship Object R and store it on the DHT
+                     * 3. Append R to the connections of the requester
                      */
                     Relationship r = new Relationship(cUserProfile.getNode().getUserId(), userProfile.getUid());
                     cUserProfile.getNode().put(r);
 
-                    /* Get the connections request object of the requestee */
-                    ConnectionRequests userCr = userProfile.getConnectionRequests();
-                    System.out.println(userCr);
-                    userCr.addConnectionRequest(cUserProfile.getUid(), r.getKey());
+                    /* Get the connections request object of the requester */
+                    Connections conns = cUserProfile.getConnections();
+                    System.out.println(conns);
+                    conns.addConnection(r);
 
                     try
                     {
-                        cUserProfile.getNode().storeLocallyAndUniversally(userCr);
+                        cUserProfile.getNode().storeLocallyAndUniversally(conns);
                     }
                     catch (IOException | InterruptedException | ExecutionException ioe)
                     {
                         ioe.printStackTrace();
                     }
 
-                    /* Lets get the connection requests again and see if it's updated */
-                    ConnectionRequests userCr2 = userProfile.getConnectionRequests();
+                    /* Lets get the connections object again and see if it's updated */
+                    Connections userCr2 = cUserProfile.getConnections();
                     System.out.println(userCr2);
                 }
             });

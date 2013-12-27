@@ -1,6 +1,7 @@
 package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
@@ -88,7 +89,7 @@ public class PostsReference implements SocializeContent, Reference
     @Override
     public String getType()
     {
-        return this.type;
+        return PostsReference.type;
     }
 
     /**
@@ -126,9 +127,9 @@ public class PostsReference implements SocializeContent, Reference
             this.references = gson.fromJson(data.get("references").toString(), HashMap.class);
             return true;
         }
-        catch (Exception e)
+        catch (JsonSyntaxException e)
         {
-            System.err.println("Unable to load post references from the json object.");
+            System.err.println("Unable to load post references from the json object. Error: " + e.getMessage());
             return false;
         }
     }
@@ -158,7 +159,7 @@ public class PostsReference implements SocializeContent, Reference
         Gson gson = new Gson();
         data.put("references", gson.toJson(this.references));
         data.put("uid", this.uid);
-        data.put("type", this.type);
+        data.put("type", PostsReference.type);
         return gson.toJson(data);
     }
     

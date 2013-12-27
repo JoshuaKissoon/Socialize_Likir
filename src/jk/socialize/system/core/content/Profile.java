@@ -34,6 +34,7 @@ public class Profile implements SocializeContent
     /* Reference objects */
     private PostsReference postsReference = null;
     private ConnectionRequests connectionRequests = null;
+    private Connections connections = null;
 
     /**
      * @desc Constructor for a profile
@@ -348,6 +349,43 @@ public class Profile implements SocializeContent
         }
 
         return this.connectionRequests;
+    }
+    
+    public Connections getConnections()
+    {
+        if (this.connections == null)
+        {
+            /* We need to load the connection requests */
+            try
+            {
+                System.out.println("Node \"" + node.getUserId() + "\" Loading Connections object \n");
+
+                /* Get 5 of this user's profile and choose the most recent */
+                Collection<StorageEntry> results = node.get(this.connectionsRefNid, Connections.type, this.uid, true, 5).get();
+
+                if (results.size() > 0)
+                {
+                    long recency = 0;
+                    for (StorageEntry e : results) //print the found values
+                    {
+                        if (e.getSubmissionTime() > recency)
+                        {
+                            recency = e.getSubmissionTime();
+
+                            /* Load/update the profile from this entry */
+                            connections = new Connections();
+                            connections.loadData(e.getContent().getValue());
+                        }
+                    }
+                }
+            }
+            catch (InterruptedException | ExecutionException ie)
+            {
+                System.err.println("Posts References loading Interrupted");
+            }
+        }
+
+        return this.connections;
     }
 
     /**

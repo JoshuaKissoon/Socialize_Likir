@@ -79,7 +79,7 @@ public class SocializeNode extends Node
         this.storeLocally(content);
         System.out.println("Local Storage Successful");
         Integer replicas = this.put(content).get();
-        System.out.println("Foreign Storage Successful");
+        System.out.println("Foreign Storage Successful at " + replicas + " replicas");
         return replicas;
     }
 }

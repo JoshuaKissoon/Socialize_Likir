@@ -67,6 +67,11 @@ public class Relationship implements SocializeContent
     {
         return this.uid;
     }
+    
+    public String getConnectionUid()
+    {
+        return this.connectionUid;
+    }
     /* CREATING THE NECESSARY METHODS SPECIFIED BY THE 'SocializeContent' INTERFACE */
 
     /**

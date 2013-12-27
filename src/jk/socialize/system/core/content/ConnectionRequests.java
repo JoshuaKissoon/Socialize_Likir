@@ -1,6 +1,7 @@
 package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
@@ -93,7 +94,7 @@ public class ConnectionRequests implements SocializeContent, Reference
     @Override
     public String getType()
     {
-        return this.type;
+        return ConnectionRequests.type;
     }
 
     /**
@@ -134,9 +135,9 @@ public class ConnectionRequests implements SocializeContent, Reference
             this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
-        catch (Exception e)
+        catch (JsonSyntaxException e)
         {
-            System.err.println("Unable to load the connection requests for this connection requests object.");
+            System.err.println("Unable to load the connection requests for this connection requests object. Error: " + e.getMessage());
             return false;
         }
     }
@@ -166,7 +167,7 @@ public class ConnectionRequests implements SocializeContent, Reference
         Gson gson = new Gson();
         data.put("requests", gson.toJson(this.requests));
         data.put("uid", this.uid);
-        data.put("type", this.type);
+        data.put("type", ConnectionRequests.type);
         data.put("key", new String(this.key.getId()));
         return gson.toJson(data);
     }
@@ -177,7 +178,6 @@ public class ConnectionRequests implements SocializeContent, Reference
         return this.ttl;
     }
 
-    /* Java Common Methods */
     @Override
     public String toString()
     {
