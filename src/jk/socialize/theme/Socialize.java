@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -26,6 +25,7 @@ import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.abstraction.SocializeNode;
 import jk.socialize.system.core.Session;
 import jk.socialize.system.core.content.ConnectionRequests;
+import jk.socialize.utilities.JGridBagLayout;
 import unito.likir.settings.PropFinder;
 import unito.likir.settings.Settings;
 
@@ -82,7 +82,6 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
             }
             catch (IOException ioe)
             {
-                ioe.printStackTrace();
                 node = new SocializeNode(userId);
             }
         }
@@ -142,6 +141,8 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         menu = new JMenu("Profile");
 
         menuItem = new JMenuItem("View Profile");
+        menuItem.addActionListener(this);
+        menuItem.setActionCommand("viewProfile");
         menu.add(menuItem);
 
         menuBar.add(menu);
@@ -177,7 +178,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
 
         /* 4.1. Put the "Add Status Form" at the top of the content area */
         panel = new StatusAddForm(cUserProfile);
-        gbc = getItemConstraints(5, 5);
+        gbc = JGridBagLayout.getItemConstraints(5, 5);
         content.add(panel, gbc);
 
         /* Add the content to the main panel */
@@ -218,6 +219,10 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
             case "friendSearch":
                 FriendSearchFrame sf = new FriendSearchFrame(cUserProfile);
                 sf.showGUI();
+                break;
+            case "viewProfile":
+                ViewOwnProfile vop = new ViewOwnProfile(cUserProfile);
+                vop.showGUI();
                 break;
             case "printNodeStorage":
                 System.out.println("\n*****************************  Printing Node Storage  ***************************************\n");
@@ -264,33 +269,5 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
     @Override
     public void windowDeactivated(WindowEvent wEvent)
     {
-    }
-
-    private GridBagConstraints getLabelConstraints(int x, int y)
-    {
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = x;
-        c.gridy = y;
-        c.weightx = 0.0;
-        c.weighty = 0.1;
-        c.anchor = GridBagConstraints.WEST;
-        c.fill = GridBagConstraints.BOTH;
-
-        return c;
-    }
-
-    private GridBagConstraints getItemConstraints(int x, int y)
-    {
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = x;
-        c.gridy = y;
-        c.gridwidth = 1;
-        c.gridheight = 1;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.insets = new Insets(10, 10, 10, 10);
-        c.anchor = GridBagConstraints.WEST;
-
-        return c;
     }
 }

@@ -18,11 +18,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import jk.socialize.system.core.content.ConnectionRequests;
 import jk.socialize.system.core.content.Connections;
 import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.core.content.Relationship;
-import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
 
 /**
@@ -34,7 +32,7 @@ public class FriendSearchFrame extends JFrame implements ActionListener
 {
 
     /* Main objects */
-    private FriendSearchFrame frame = this;
+    private final FriendSearchFrame frame = this;
     private final Profile cUserProfile;          // The node of the currently logged in user
 
     /* Frame Components */
@@ -43,7 +41,6 @@ public class FriendSearchFrame extends JFrame implements ActionListener
 
     /* Form Components */
     private JTextField keywordTF;
-    private JLabel label;
 
     public FriendSearchFrame(Profile iProfile)
     {
