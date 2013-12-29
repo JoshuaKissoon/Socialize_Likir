@@ -144,6 +144,11 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         menuItem.addActionListener(this);
         menuItem.setActionCommand("viewProfile");
         menu.add(menuItem);
+        
+        menuItem = new JMenuItem("Edit Profile");
+        menuItem.addActionListener(this);
+        menuItem.setActionCommand("editProfile");
+        menu.add(menuItem);
 
         menuBar.add(menu);
 
@@ -217,12 +222,16 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         switch (event.getActionCommand())
         {
             case "friendSearch":
-                FriendSearchFrame sf = new FriendSearchFrame(cUserProfile);
+                FriendSearch sf = new FriendSearch(cUserProfile);
                 sf.showGUI();
                 break;
             case "viewProfile":
-                ViewOwnProfile vop = new ViewOwnProfile(cUserProfile);
+                ViewProfile vop = new ViewProfile(cUserProfile);
                 vop.showGUI();
+                break;
+            case "editProfile":
+                EditProfile ep = new EditProfile(cUserProfile);
+                ep.showGUI();
                 break;
             case "printNodeStorage":
                 System.out.println("\n*****************************  Printing Node Storage  ***************************************\n");

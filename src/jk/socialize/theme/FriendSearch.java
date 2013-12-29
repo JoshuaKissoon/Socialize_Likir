@@ -28,11 +28,11 @@ import unito.likir.storage.StorageEntry;
  * @description A class that generates a search frame to allow the user to search for content
  * @date 20131025
  */
-public class FriendSearchFrame extends JFrame implements ActionListener
+public class FriendSearch extends JFrame implements ActionListener
 {
 
     /* Main objects */
-    private final FriendSearchFrame frame = this;
+    private final FriendSearch frame = this;
     private final Profile cUserProfile;          // The node of the currently logged in user
 
     /* Frame Components */
@@ -42,7 +42,7 @@ public class FriendSearchFrame extends JFrame implements ActionListener
     /* Form Components */
     private JTextField keywordTF;
 
-    public FriendSearchFrame(Profile iProfile)
+    public FriendSearch(Profile iProfile)
     {
         /* Set the node to the input node */
         this.cUserProfile = iProfile;

@@ -76,7 +76,7 @@ public class Profile implements SocializeContent
 
             Collection<StorageEntry> results = node.get(this.getKey(), this.type, this.uid, false, 5).get();
 
-            if (results.size() == 0)
+            if (results.isEmpty())
             {
                 System.out.println("No Profile Found! \n");
                 return false;

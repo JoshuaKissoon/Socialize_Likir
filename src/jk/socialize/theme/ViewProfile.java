@@ -16,7 +16,7 @@ import jk.socialize.utilities.JGridBagLayout;
  * @date 20131227
  * @desc JFrame that allows a user to view his/her own profile
  */
-public class ViewOwnProfile extends JFrame
+public class ViewProfile extends JFrame
 {
 
     /* Variable Declarations */
@@ -32,7 +32,7 @@ public class ViewOwnProfile extends JFrame
     /* Layout Manager */
     private GridBagConstraints gbc;
 
-    public ViewOwnProfile(Profile p)
+    public ViewProfile(Profile p)
     {
         /* Save the profile reference locally */
         this.cUserProfile = p;
