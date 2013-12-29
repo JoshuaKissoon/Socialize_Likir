@@ -103,7 +103,7 @@ public class ManageConnections extends JFrame implements ActionListener
             btn.addActionListener(this);
             gbc = JGridBagLayout.getItemConstraints(1, 0);
             userPanel.add(btn, gbc);
-            
+
             /* Add the user Panel to the main panel */
             gbc = JGridBagLayout.getItemConstraints(0, count);
             mainPanel.add(userPanel, gbc);
@@ -129,25 +129,28 @@ public class ManageConnections extends JFrame implements ActionListener
     @Override
     public void actionPerformed(ActionEvent event)
     {
-        System.out.println(event);
-        JButton src = (JButton) event.getSource();
-        System.out.println("ID: " + src.getName());
         switch (event.getActionCommand())
         {
             case "viewProfile":
-            /* View the profile of a user */
-//                this.cUserData.putData(UserData.DATA_NAME, nameTF.getText());
-//                this.cUserData.putData(UserData.DATA_SOCIALIZE_USERNAME, usernameTF.getText());
-//                this.cUserData.putData(UserData.DATA_DOB, dobTF.getText());
-//                try
-//                {
-//                    cUserProfile.getNode().storeLocallyAndUniversally(this.cUserData);
-//                }
-//                catch (IOException | InterruptedException | ExecutionException ioe)
-//                {
-//                    ioe.printStackTrace();
-//                }
-//                break;
+                /* View the profile of a connection */
+                JButton srcBtn = (JButton) event.getSource();
+
+                /* Loading the profile */
+                Profile connProfile = new Profile(this.cUserProfile.getNode(), srcBtn.getName());
+
+                if (connProfile.profileExists())
+                {
+                    /* Load the user data object from this connection's profile */
+                    connProfile.loadProfile();
+                    UserData connUserData = connProfile.getUserData();
+                    ViewConnectionProfile vcp = new ViewConnectionProfile(connUserData);
+                    vcp.showGUI();
+                }
+                else
+                {
+                    /* @todo Show some error here */
+                }
+
         }
     }
 }
