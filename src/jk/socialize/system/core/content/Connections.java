@@ -21,7 +21,7 @@ public class Connections implements SocializeContent, Reference
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    HashMap<String, String> connections = new HashMap<>();  // A Hashmap<Connection userId, Relationship Object NodeId> to store the connections
+    private HashMap<String, String> connections = new HashMap<>();  // A Hashmap<Connection userId, Relationship Object NodeId> to store the connections
 
     /**
      * @desc A blank constructor to be used to load the connection data from the DHT
@@ -44,6 +44,11 @@ public class Connections implements SocializeContent, Reference
     {
         /* Add a new connection for this user */
         this.connections.put(iRelationship.getConnectionUid(), new String(iRelationship.getKey().getId()));
+    }
+    
+    public HashMap<String, String> getConnections()
+    {
+        return this.connections;
     }
 
     /**
@@ -90,7 +95,7 @@ public class Connections implements SocializeContent, Reference
     @Override
     public String getType()
     {
-        return this.type;
+        return Connections.type;
     }
 
     /**

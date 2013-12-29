@@ -104,7 +104,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         cUserProfile = new Profile(node, node.getUserId());
 
         /* Creates a new profile if the profile does not exist */
-        if (!cUserProfile.nodeProfileExists())
+        if (!cUserProfile.profileExists())
         {
             System.out.println("No profile Exists; lets create a new profile");
             cUserProfile.createProfile();
@@ -144,7 +144,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         menuItem.addActionListener(this);
         menuItem.setActionCommand("viewProfile");
         menu.add(menuItem);
-        
+
         menuItem = new JMenuItem("Edit Profile");
         menuItem.addActionListener(this);
         menuItem.setActionCommand("editProfile");
@@ -153,15 +153,20 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         menuBar.add(menu);
 
         /* Friends Menu */
-        menu = new JMenu("Friends");
+        menu = new JMenu("Connections");
 
-        menuItem = new JMenuItem("Find Friends");
+        menuItem = new JMenuItem("View Connections");
         menuItem.addActionListener(this);
-        menuItem.setActionCommand("friendSearch");
+        menuItem.setActionCommand("manageConnections");
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Find Connections");
+        menuItem.addActionListener(this);
+        menuItem.setActionCommand("connectionSearch");
         menu.add(menuItem);
 
         menuBar.add(menu);
-        
+
         /* Help Menu */
         menu = new JMenu("Help");
 
@@ -221,7 +226,11 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
     {
         switch (event.getActionCommand())
         {
-            case "friendSearch":
+            case "manageConnections":
+                ManageConnections mc = new ManageConnections(cUserProfile);
+                mc.showGUI();
+                break;
+            case "connectionSearch":
                 FriendSearch sf = new FriendSearch(cUserProfile);
                 sf.showGUI();
                 break;

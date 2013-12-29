@@ -1,6 +1,7 @@
 package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
@@ -18,6 +19,14 @@ public class Relationship implements SocializeContent
     private NodeId key;
     private final String type = "Relationship";
     private final long ttl = 999999999999l;
+    
+    /**
+     * @desc Load the relationship from the data gotten from the DHT
+     */
+    public Relationship()
+    {
+        
+    }
 
     public Relationship(String iOwnerUid, String iConnectionUid)
     {
@@ -30,7 +39,7 @@ public class Relationship implements SocializeContent
         /* Generate a key for this relationship */
         this.generateKey();
     }
-
+    
     /**
      * @description Method that generates the key for this content type
      * - The key is the current timestamp (10 characters) + _ + first 9 characters of a user's uid
@@ -126,7 +135,7 @@ public class Relationship implements SocializeContent
             this.uid = data.get("uid").toString();
             return true;
         }
-        catch (Exception e)
+        catch (JsonSyntaxException e)
         {
             System.err.println("Unable to load data for the status from it's json object.");
             return false;

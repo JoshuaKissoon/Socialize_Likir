@@ -68,7 +68,7 @@ public class Profile implements SocializeContent
      * @description Checks if a profile exists on the network for this node
      * @return true if a profile exists on the network for this node
      */
-    public Boolean nodeProfileExists()
+    public Boolean profileExists()
     {
         try
         {
@@ -190,7 +190,7 @@ public class Profile implements SocializeContent
             System.out.println("Node \"" + node.getUserId() + "\" Loading Profile:" + this.key + "\n");
 
             /* Get 5 of this user's profile and choose the most recent */
-            Collection<StorageEntry> results = node.get(this.getKey(), this.type, this.uid, true, 5).get();
+            Collection<StorageEntry> results = node.get(this.getKey(), Profile.type, this.uid, true, 5).get();
 
             if (results.size() > 0)
             {
@@ -209,7 +209,7 @@ public class Profile implements SocializeContent
         }
         catch (InterruptedException | ExecutionException ie)
         {
-            System.err.println("Profile loading Interrupted");
+            System.err.println("Profile loading Interrupted. Error: " + ie.getMessage());
         }
 
         /* Testing profile values loading */

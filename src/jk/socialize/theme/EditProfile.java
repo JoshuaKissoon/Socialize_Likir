@@ -20,7 +20,7 @@ import jk.socialize.utilities.JGridBagLayout;
 /**
  * @author Joshua Kissoon
  * @date 20131227
- * @desc JFrame that allows a user to view his/her own profile
+ * @desc JFrame that allows a user to edit his/her own profile
  */
 public class EditProfile extends JFrame implements ActionListener
 {
