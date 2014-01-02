@@ -25,6 +25,11 @@ public class PostsReference implements SocializeContent, Reference
     /* Main Objects */
     HashMap<String, NodeId> references = new HashMap<>();  // A Hashmap<String date, Relationship Object NodeId> to store the connections
 
+    public PostsReference()
+    {
+        
+    }
+    
     public PostsReference(String iOwnerUid)
     {
         /* Set the uid of the owner of this content */
@@ -125,6 +130,8 @@ public class PostsReference implements SocializeContent, Reference
             Gson gson = new Gson();
             HashMap data = gson.fromJson(jsonString, HashMap.class);
             this.references = gson.fromJson(data.get("references").toString(), HashMap.class);
+            this.uid = data.get("uid").toString();
+            this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
         catch (JsonSyntaxException e)
@@ -160,6 +167,7 @@ public class PostsReference implements SocializeContent, Reference
         data.put("references", gson.toJson(this.references));
         data.put("uid", this.uid);
         data.put("type", PostsReference.type);
+        data.put("key", new String(this.key.getId()));
         return gson.toJson(data);
     }
     
@@ -167,5 +175,18 @@ public class PostsReference implements SocializeContent, Reference
     public long getTtl()
     {
         return this.ttl;
+    }
+
+    @Override
+    public String toString()
+    {
+        String data = "************ PRINTING Post References START ************** \n ";
+
+        data += "Key: " + new String(this.key.getId()) + "\n";
+        data += "Posts: " + this.references + "\n";
+
+        data += "************ PRINTING Post References END ************** \n\n";
+
+        return data;
     }
 }

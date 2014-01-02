@@ -145,4 +145,17 @@ public class Status implements SocializeContent
     {
         return this.ttl;
     }
+
+    @Override
+    public String toString()
+    {
+        String data = "************ PRINTING Status START ************** \n ";
+
+        data += "Key: " + new String(this.key.getId()) + "\n";
+        data += "Status: " + this.status + "\n";
+
+        data += "************ PRINTING Status END ************** \n\n";
+
+        return data;
+    }
 }

@@ -3,13 +3,16 @@ package jk.socialize.theme;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
+import jk.socialize.system.abstraction.SocializeNode;
+import jk.socialize.system.core.content.PostsReference;
 import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.core.content.Status;
-import unito.likir.Node;
 
 /**
  * @author Joshua Kissoon
@@ -21,8 +24,8 @@ public class StatusAddForm extends JPanel implements ActionListener
 
     /* Main Components */
     private final JPanel form = this;
-    private Profile profile;
-    private Node node;
+    private final Profile profile;
+    private final SocializeNode node;
 
     /* Form Components */
     private final JTextArea statusTA;
@@ -54,24 +57,25 @@ public class StatusAddForm extends JPanel implements ActionListener
             try
             {
                 Status status = new Status(statusTA.getText().toString(), node.getUserId());
-                System.out.println("Storing " + status.getKey().getId() + ": " + statusTA.getText());
-                int replica = node.put(status.getKey(), status.getValue(), status.getType(), 360000000).get();
-                System.out.println("CONTENT STORED AT " + replica + " REPLICAS \n");
+                int replica = node.storeLocallyAndUniversally(status);
+                System.out.println("Status STORED AT " + replica + " REPLICAS \n");
 
                 /* Now we update this user's posts reference object */
-                System.out.println(profile.getPostsReference().getReferences());
+                PostsReference refs = profile.getPostsReference();
+
                 /* Current timestamp: String.valueOf((System.currentTimeMillis() / 1000L)) */
-                profile.getPostsReference().addReference(String.valueOf((System.currentTimeMillis() / 1000L)), status.getKey());
-                System.out.println(profile.getPostsReference().getReferences());
+                refs.addReference(String.valueOf((System.currentTimeMillis() / 1000L)), status.getKey());
 
                 /* Update the post references object in the DHT */
-                int replicas = node.put( profile.getPostsReference().getKey(),  profile.getPostsReference().getValue(),  profile.getPostsReference().getType(), 360000000).get();
-                System.out.println("CONTENT Posts Reference object AT " + replicas + " REPLICAS \n");
+                int replicas = node.storeLocallyAndUniversally(refs);
+                System.out.println("Posts Reference object stored AT " + replicas + " REPLICAS \n");
 
+                /* Recheck the post references */
+                PostsReference refss = profile.getPostsReference();
             }
-            catch (Exception e)
+            catch (IOException | InterruptedException | ExecutionException e)
             {
-                e.printStackTrace();
+                System.out.println("Error while trying to post status, error: " + e.getMessage());
             }
         }
     }

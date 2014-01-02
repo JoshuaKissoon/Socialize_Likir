@@ -285,10 +285,10 @@ public class Profile implements SocializeContent
             /* We need to load the posts reference */
             try
             {
-                System.out.println("Node \"" + node.getUserId() + "\" Loading Profile:" + this.key + "\n");
+                System.out.println("Node \"" + node.getUserId() + "\" Loading Post References:" + this.postsRefNid + "\n");
 
                 /* Get 5 of this user's profile and choose the most recent */
-                Collection<StorageEntry> results = node.get(this.getKey(), this.type, this.uid, true, 5).get();
+                Collection<StorageEntry> results = node.get(this.postsRefNid, PostsReference.type, this.uid, true, 5).get();
 
                 if (results.size() > 0)
                 {
@@ -300,7 +300,7 @@ public class Profile implements SocializeContent
                             recency = e.getSubmissionTime();
 
                             /* Load/update the profile from this entry */
-                            postsReference = new PostsReference(this.uid);
+                            postsReference = new PostsReference();
                             postsReference.loadData(e.getContent().getValue());
                         }
                     }
