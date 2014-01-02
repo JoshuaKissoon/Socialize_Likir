@@ -64,7 +64,7 @@ public class StatusAddForm extends JPanel implements ActionListener
                 PostsReference refs = profile.getPostsReference();
 
                 /* Current timestamp: String.valueOf((System.currentTimeMillis() / 1000L)) */
-                refs.addReference(String.valueOf((System.currentTimeMillis() / 1000L)), status.getKey());
+                refs.addReference(String.valueOf((System.currentTimeMillis() / 1000L)), new String(status.getKey().getId()));
 
                 /* Update the post references object in the DHT */
                 int replicas = node.storeLocallyAndUniversally(refs);

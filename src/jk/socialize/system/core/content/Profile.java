@@ -1,6 +1,8 @@
 package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
@@ -110,15 +112,15 @@ public class Profile implements SocializeContent
         {
             System.out.println("Creating & Storing Connections Object.");
 
-            Connections connections = new Connections(this.uid);
+            Connections tconns = new Connections(this.uid);
 
-            int replica = node.storeLocallyAndUniversally(connections);
+            int replica = node.storeLocallyAndUniversally(tconns);
             System.out.println("Connection Object Stored at " + replica + " Replicas \n");
-            this.connectionsRefNid = connections.getKey();
+            this.connectionsRefNid = tconns.getKey();
         }
-        catch (Exception e)
+        catch (IOException | InterruptedException | ExecutionException e)
         {
-            e.printStackTrace();
+            System.out.println("Error whiles creting Connections object. Error: " + e.getMessage());
         }
 
         /* 2. Create and store a posts references object */
@@ -131,9 +133,9 @@ public class Profile implements SocializeContent
             System.out.println("Post References Object Stored at " + replica + " Replicas \n");
             this.postsRefNid = pReferences.getKey();
         }
-        catch (Exception e)
+        catch (IOException | InterruptedException | ExecutionException e)
         {
-            e.printStackTrace();
+            System.out.println("Error whiles creting Posts Reference object. Error: " + e.getMessage());
         }
 
         /* 3. Create and store a user data object */
@@ -146,9 +148,9 @@ public class Profile implements SocializeContent
             System.out.println("User Data Object Stored at " + replica + " Replicas \n");
             this.userDataRefNid = uData.getKey();
         }
-        catch (Exception e)
+        catch (IOException | InterruptedException | ExecutionException e)
         {
-            e.printStackTrace();
+            System.out.println("Error whiles creting User Data object. Error: " + e.getMessage());
         }
 
         /* 4. Create and store a ConnectionRequestsObject object */
@@ -162,9 +164,9 @@ public class Profile implements SocializeContent
             System.out.println("ConnectionRequests Object Stored at " + replica + " Replicas \n");
             this.connectionRequestsRefNid = connRequests.getKey();
         }
-        catch (Exception e)
+        catch (IOException | InterruptedException | ExecutionException e)
         {
-            e.printStackTrace();
+            System.out.println("Error whiles creting ConnectionsRequest object. Error: " + e.getMessage());
         }
 
         /* 5. Store the profile object on the DHT */
@@ -175,9 +177,9 @@ public class Profile implements SocializeContent
             int replica = node.storeLocallyAndUniversally(this);
             System.out.println("User Profile Object Stored at " + replica + " Replicas \n");
         }
-        catch (Exception e)
+        catch (IOException | InterruptedException | ExecutionException e)
         {
-            e.printStackTrace();
+            System.out.println("Error whiles creting Profile object. Error: " + e.getMessage());
         }
         return true;
     }
@@ -493,7 +495,7 @@ public class Profile implements SocializeContent
             this.connectionRequestsRefNid = new NodeId(data.get("connectionRequestsRefNid").toString().getBytes());
             return true;
         }
-        catch (Exception e)
+        catch (JsonSyntaxException e)
         {
             System.err.println("Unable to load data for the profile from it's json object.");
             return false;

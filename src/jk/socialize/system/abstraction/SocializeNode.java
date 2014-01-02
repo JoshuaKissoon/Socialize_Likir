@@ -7,9 +7,12 @@ package jk.socialize.system.abstraction;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
+import jk.socialize.system.core.content.ConnectionRequests;
 import jk.socialize.system.core.content.SocializeContent;
 import unito.likir.Node;
+import unito.likir.NodeId;
 import unito.likir.io.ObservableFuture;
 import unito.likir.storage.StorageEntry;
 
@@ -82,4 +85,39 @@ public class SocializeNode extends Node
         System.out.println("Foreign Storage Successful at " + replicas + " replicas");
         return replicas;
     }
+
+    public SocializeContent getContent(NodeId contentId, String ownerUid, SocializeContent content)
+    {
+
+        /* We need to load the connection requests */
+        try
+        {
+            System.out.println("Node \"" + this.getUserId() + "\" Loading Connections request object \n");
+
+            /* Get 5 of this user's profile and choose the most recent */
+            Collection<StorageEntry> results = this.get(contentId, content.getType(), ownerUid, true, 5).get();
+
+            if (results.size() > 0)
+            {
+                long recency = 0;
+                for (StorageEntry e : results) //print the found values
+                {
+                    if (e.getSubmissionTime() > recency)
+                    {
+                        recency = e.getSubmissionTime();
+
+                        /* Load/update the content from this entry */
+                        content.loadData(e.getContent().getValue());
+                    }
+                }
+            }
+        }
+        catch (InterruptedException | ExecutionException ie)
+        {
+            System.err.println("Posts References loading Interrupted");
+        }
+
+        return content;
+    }
+
 }

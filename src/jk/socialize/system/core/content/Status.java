@@ -1,6 +1,7 @@
 package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import java.util.HashMap;
 import unito.likir.NodeId;
 
@@ -19,6 +20,11 @@ public class Status implements SocializeContent
     private final String type = "status";
     private final long ttl = 999999999999l;
 
+    public Status()
+    {
+        
+    }
+    
     public Status(String iStatus, String iUserId)
     {
         /* Set the status value */
@@ -29,6 +35,11 @@ public class Status implements SocializeContent
 
         /* Setup the status key here */
         this.generateKey();
+    }
+    
+    public String getStatus()
+    {
+        return this.status;
     }
 
     /**
@@ -107,9 +118,10 @@ public class Status implements SocializeContent
             HashMap data = new Gson().fromJson(jsonString, HashMap.class);
             this.status = data.get("status").toString();
             this.uid = data.get("uid").toString();
+            this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
-        catch (Exception e)
+        catch (JsonSyntaxException e)
         {
             System.err.println("Unable to load data for the status from it's json object.");
             return false;
@@ -137,6 +149,7 @@ public class Status implements SocializeContent
         HashMap<String, String> data = new HashMap(3);
         data.put("status", this.status);
         data.put("uid", this.uid);
+        data.put("key", new String(this.key.getId()));
         return new Gson().toJson(data);
     }
     

@@ -191,6 +191,12 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         gbc = JGridBagLayout.getItemConstraints(5, 5);
         content.add(panel, gbc);
 
+        /* 4.2. Adding the home feed to the main panel */
+        HomeFeed homeFeed = new HomeFeed(cUserProfile);
+        gbc = JGridBagLayout.getItemConstraints(5, 10);
+        gbc.gridheight = 10;
+        content.add(homeFeed.getFeeds(), gbc);
+        
         /* Add the content to the main panel */
         scrollPane = new JScrollPane(content);
         scrollPane.setMinimumSize(new Dimension(600, 400));

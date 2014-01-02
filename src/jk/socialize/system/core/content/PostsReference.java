@@ -23,7 +23,7 @@ public class PostsReference implements SocializeContent, Reference
     private final long ttl = 999999999999l;
 
     /* Main Objects */
-    HashMap<String, NodeId> references = new HashMap<>();  // A Hashmap<String date, Relationship Object NodeId> to store the connections
+    HashMap<String, String> references = new HashMap<>();  // A Hashmap<String date, Relationship Object NodeId> to store the connections
 
     public PostsReference()
     {
@@ -39,15 +39,24 @@ public class PostsReference implements SocializeContent, Reference
         this.generateKey();
     }
 
-    public void addReference(String iDate, NodeId iKey)
+    public void addReference(String iDate, String iKey)
     {
         /* Add a new connection for this user */
         this.references.put(iDate, iKey);
     }
 
-    public HashMap<String, NodeId> getReferences()
+    public HashMap<String, String> getReferences()
     {
         return this.references;
+    }
+    
+    /**
+     * @desc Checks how many posts are in this persons posts reference
+     * @return Integer The number of posts referenced here
+     */
+    public Integer getNumberOfPosts()
+    {
+        return this.references.size();
     }
 
     /**
