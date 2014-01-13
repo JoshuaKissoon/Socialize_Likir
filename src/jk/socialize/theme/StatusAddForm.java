@@ -1,6 +1,7 @@
 package jk.socialize.theme;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -46,6 +47,7 @@ public class StatusAddForm extends JPanel implements ActionListener
         btn.setActionCommand("postStatus");
         btn.addActionListener(this);
         form.add(btn, BorderLayout.EAST);
+        form.setPreferredSize(new Dimension(540, 100));
     }
 
     @Override
@@ -72,6 +74,8 @@ public class StatusAddForm extends JPanel implements ActionListener
 
                 /* Recheck the post references */
                 PostsReference refss = profile.getPostsReference();
+                System.out.println(refss);
+                statusTA.setText("");
             }
             catch (IOException | InterruptedException | ExecutionException e)
             {

@@ -10,12 +10,14 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import jk.socialize.system.core.Session;
 
 /**
@@ -34,7 +36,7 @@ public class Login extends JFrame implements ActionListener
     /* Form Items */
     private final JTextField userNameTF;
     private final JPasswordField passwordTF;
-    private JButton btn;
+    private final JButton btn;
     private JLabel label;
 
     /* Layout Manager Components */
@@ -43,7 +45,8 @@ public class Login extends JFrame implements ActionListener
     public Login()
     {
         form = new JPanel(new GridBagLayout());
-        
+        form.setBorder(new EmptyBorder(20, 20, 20, 20));
+
         label = new JLabel("Username: ");
         gbc = getLabelConstraints(4, 4);
         form.add(label, gbc);
@@ -74,13 +77,13 @@ public class Login extends JFrame implements ActionListener
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.pack();
-        frame.setVisible(true);        
+        frame.setVisible(true);
     }
     
     @Override
     public void actionPerformed(ActionEvent event)
     {
-        if(event.getActionCommand().equals("login"))
+        if (event.getActionCommand().equals("login"))
         {
             /* Login the user */
             Session.userId = userNameTF.getText();

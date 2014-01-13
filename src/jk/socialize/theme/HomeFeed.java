@@ -5,9 +5,14 @@
  */
 package jk.socialize.theme;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.HashMap;
+import java.awt.Insets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JLabel;
@@ -29,7 +34,7 @@ public class HomeFeed extends JPanel
     private GridBagConstraints gbc;
 
     /* Main Variables */
-    private final TreeMap<String, PostItemData> posts = new TreeMap<>();
+    private TreeMap<String, PostItemData> posts = new TreeMap<>();
     private final Profile cUserProfile;
 
     /* Some constants */
@@ -58,6 +63,7 @@ public class HomeFeed extends JPanel
         Integer counter = 0;
         for (Map.Entry<String, PostItemData> entry : this.posts.entrySet())
         {
+            String timestamp = entry.getKey();
             PostItemData itemData = entry.getValue();
             NodeId statusNid = new NodeId(itemData.postNodeId.getBytes());
 
@@ -66,14 +72,35 @@ public class HomeFeed extends JPanel
             st = (Status) this.cUserProfile.getNode().getContent(statusNid, itemData.ownerUid, st);
             System.out.println(st);
 
+            String date = "";
+            try
+            {
+                Date temp = new Date((long) Integer.parseInt(timestamp) * 1000L); // *1000 is to convert seconds to milliseconds
+                date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(temp); // the format of your date
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
             postPanel = new JPanel(new GridBagLayout());
-            lbl = new JLabel(st.getStatus());
-            gbc = JGridBagLayout.getLabelConstraints(0, 0);
+            lbl = new JLabel("     " + itemData.ownerUid + " posted on " + date, JLabel.LEFT);
+            gbc = JGridBagLayout.getItemConstraints(0, 0);
+            gbc.ipadx = 10;
             postPanel.add(lbl, gbc);
-            
+
+            lbl = new JLabel("     " + st.getStatus());
+            gbc = JGridBagLayout.getItemConstraints(0, 1);
+            gbc.ipadx = 10;
+            postPanel.add(lbl, gbc);
+
+            postPanel.setPreferredSize(new Dimension(540, 50));
+            postPanel.setBackground(Color.LIGHT_GRAY);
+
             /* Adding the post to the main panel */
             gbc = JGridBagLayout.getItemConstraints(0, counter);
+            gbc.insets = new Insets(10, 0, 0, 0);
             mainPanel.add(postPanel, gbc);
+            mainPanel.setBackground(Color.WHITE);
             counter++;
         }
     }
@@ -134,6 +161,7 @@ public class HomeFeed extends JPanel
 
         /* 4. Now we need to sort the list of posts in chronological order */
         /* The list will automatically be sorted since it's in a treemap */
+        this.posts = new TreeMap<>(this.posts.descendingMap());
         System.out.println(this.posts);
     }
 

@@ -19,8 +19,7 @@ public class JGridBagLayout
         c.weightx = 0.0;
         c.weighty = 0.1;
         c.anchor = GridBagConstraints.WEST;
-        c.fill = GridBagConstraints.BOTH;
-
+        
         return c;
     }
 
@@ -33,7 +32,6 @@ public class JGridBagLayout
         c.gridheight = 1;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        c.insets = new Insets(10, 10, 10, 10);
         c.anchor = GridBagConstraints.WEST;
 
         return c;

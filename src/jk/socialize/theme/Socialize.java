@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -21,6 +23,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.border.EmptyBorder;
 import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.abstraction.SocializeNode;
 import jk.socialize.system.core.Session;
@@ -131,50 +135,63 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
 
         /* Home Menu */
         menu = new JMenu("Home");
+        menu.setIcon(new ImageIcon("images/home.png"));
 
         menuItem = new JMenuItem("Home");
+        menuItem.setIcon(new ImageIcon("images/home.png"));
         menu.add(menuItem);
-
+        
+        menu.setMargin(new Insets(10, 10, 10, 10));
         menuBar.add(menu);
-
         /* Profile Menu */
         menu = new JMenu("Profile");
+        menu.setIcon(new ImageIcon("images/profile.png"));
 
         menuItem = new JMenuItem("View Profile");
+        menuItem.setIcon(new ImageIcon("images/profile.png"));
         menuItem.addActionListener(this);
         menuItem.setActionCommand("viewProfile");
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Edit Profile");
+        menuItem.setIcon(new ImageIcon("images/edit.png"));
         menuItem.addActionListener(this);
         menuItem.setActionCommand("editProfile");
         menu.add(menuItem);
 
+        menu.setMargin(new Insets(10, 10, 10, 10));
         menuBar.add(menu);
 
         /* Friends Menu */
         menu = new JMenu("Connections");
+        menu.setIcon(new ImageIcon("images/connections.png"));
 
         menuItem = new JMenuItem("View Connections");
+        menuItem.setIcon(new ImageIcon("images/connections.png"));
         menuItem.addActionListener(this);
         menuItem.setActionCommand("manageConnections");
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Find Connections");
+        menuItem.setIcon(new ImageIcon("images/search.png"));
         menuItem.addActionListener(this);
         menuItem.setActionCommand("connectionSearch");
         menu.add(menuItem);
 
+        menu.setMargin(new Insets(10, 10, 10, 10));
         menuBar.add(menu);
 
         /* Help Menu */
         menu = new JMenu("Help");
+        menu.setIcon(new ImageIcon("images/help.png"));
 
         menuItem = new JMenuItem("Print Node Storage");
+        menuItem.setIcon(new ImageIcon("images/print.png"));
         menuItem.addActionListener(this);
         menuItem.setActionCommand("printNodeStorage");
         menu.add(menuItem);
 
+        menu.setMargin(new Insets(10, 10, 10, 10));
         menuBar.add(menu);
 
         /* 2. MAIN PANEL SETUP */
@@ -196,11 +213,12 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         gbc = JGridBagLayout.getItemConstraints(5, 10);
         gbc.gridheight = 10;
         content.add(homeFeed.getFeeds(), gbc);
+        content.setBorder(new EmptyBorder(20,20,20,20));
         
         /* Add the content to the main panel */
         scrollPane = new JScrollPane(content);
         scrollPane.setMinimumSize(new Dimension(600, 400));
-        scrollPane.setPreferredSize(new Dimension(800, 800));
+        scrollPane.setPreferredSize(new Dimension(600, 600));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         /* 6. SIDEBAR */
@@ -210,7 +228,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         /* Add the sidebar to the main panel */
         scrollPane = new JScrollPane(sidebar);
         scrollPane.setMinimumSize(new Dimension(200, 400));
-        scrollPane.setPreferredSize(new Dimension(200, 800));
+        scrollPane.setPreferredSize(new Dimension(200, 600));
         mainPanel.add(scrollPane, BorderLayout.EAST);
 
         /* Adding the main Panel to the frame */
