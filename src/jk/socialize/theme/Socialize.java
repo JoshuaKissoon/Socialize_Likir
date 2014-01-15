@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.swing.Box;
@@ -23,7 +24,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.abstraction.SocializeNode;
@@ -42,10 +44,11 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
 
     /* Main Components */
     private final JFrame frame = this;
-    private JPanel mainPanel, content, sidebar;
+    private JPanel mainPanel, content, sidebar, homeFeedsPanel;
     private JPanel panel;
     private SocializeNode node;
     private Profile cUserProfile;
+    private javax.swing.Timer timer;
 
     /* Menus */
     private JMenuBar menuBar;
@@ -70,7 +73,14 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         this.initializeNode();
 
         /* Create and Load the GUI */
-        this.createGUI();
+        SwingUtilities.invokeLater(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                createGUI();
+            }
+        });
     }
 
     private void initializeNode()
@@ -100,7 +110,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         }
         catch (IOException ioe)
         {
-            System.err.println("Error in node initialization");
+            System.err.println("Error in node initialization. Error: " + ioe.getMessage());
             System.exit(0);
         }
 
@@ -125,6 +135,25 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
 
         /* Schedule the node to update it's content every 2 minutes */
         scheduledExecutor.schedule(node.getStorageCleaner(), 2, TimeUnit.MINUTES);
+
+        /* Schedule the updating of the user home feed every minute */
+        timer = new Timer(6000, new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println("********************** Scheduled home feed update started. *********************************************\n\n");
+                homeFeedsPanel.removeAll();
+                HomeFeed homeFeed = new HomeFeed(cUserProfile);
+                homeFeedsPanel.add(homeFeed.getFeeds());
+                homeFeedsPanel.revalidate();
+                homeFeedsPanel.repaint();
+                System.out.println("*****************************Scheduled home feed update ended. ********************************************\n\n");
+            }
+        });
+        timer.setRepeats(true);
+        timer.start();
     }
 
     private void createGUI()
@@ -140,7 +169,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         menuItem = new JMenuItem("Home");
         menuItem.setIcon(new ImageIcon("images/home.png"));
         menu.add(menuItem);
-        
+
         menu.setMargin(new Insets(10, 10, 10, 10));
         menuBar.add(menu);
         /* Profile Menu */
@@ -212,9 +241,13 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         HomeFeed homeFeed = new HomeFeed(cUserProfile);
         gbc = JGridBagLayout.getItemConstraints(5, 10);
         gbc.gridheight = 10;
-        content.add(homeFeed.getFeeds(), gbc);
-        content.setBorder(new EmptyBorder(20,20,20,20));
-        
+        homeFeedsPanel = new JPanel();
+        homeFeedsPanel.setBackground(Color.WHITE);
+        homeFeedsPanel.add(homeFeed.getFeeds());
+        content.add(homeFeedsPanel, gbc);
+
+        content.setBorder(new EmptyBorder(20, 20, 20, 20));
+
         /* Add the content to the main panel */
         scrollPane = new JScrollPane(content);
         scrollPane.setMinimumSize(new Dimension(600, 400));
@@ -243,6 +276,23 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
+    }
+
+    private class HomeFeedUpdater implements Callable<Object>
+    {
+
+        @Override
+        public Object call()
+        {
+            System.out.println("********************** Scheduled home feed update started. *********************************************\n\n");
+            homeFeedsPanel.removeAll();
+            HomeFeed homeFeed = new HomeFeed(cUserProfile);
+            homeFeedsPanel.add(homeFeed.getFeeds());
+            homeFeedsPanel.revalidate();
+            homeFeedsPanel.repaint();
+            System.out.println("*****************************Scheduled home feed update ended. ********************************************\n\n");
+            return "Called!";
+        }
     }
 
     @Override

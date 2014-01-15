@@ -70,7 +70,6 @@ public class HomeFeed extends JPanel
             /* Load the status */
             Status st = new Status();
             st = (Status) this.cUserProfile.getNode().getContent(statusNid, itemData.ownerUid, st);
-            System.out.println(st);
 
             String date = "";
             try
@@ -93,7 +92,7 @@ public class HomeFeed extends JPanel
             gbc.ipadx = 10;
             postPanel.add(lbl, gbc);
 
-            postPanel.setPreferredSize(new Dimension(540, 50));
+            postPanel.setPreferredSize(new Dimension(530, 50));
             postPanel.setBackground(Color.LIGHT_GRAY);
 
             /* Adding the post to the main panel */
@@ -125,7 +124,6 @@ public class HomeFeed extends JPanel
         {
             /* 2. For each of ther user's connections, Load their Profile */
             String connectionUid = entry.getKey();
-            System.out.println("Connection Uid: " + connectionUid);
             Profile connProfile = new Profile(this.cUserProfile.getNode(), connectionUid);
             if (!connProfile.profileExists())
             {
@@ -134,11 +132,9 @@ public class HomeFeed extends JPanel
             }
 
             connProfile.loadProfile();
-            System.out.println(connProfile);
 
             /* 3. Load the PostsReference Object for the connection */
             PostsReference connectionPR = connProfile.getPostsReference();
-            System.out.println(connectionPR);
             if (connectionPR.getNumberOfPosts() > 0)
             {
                 /* Add a Maximum of MAX_POSTS_PER_CONNECTION to the posts Hashmap */
@@ -160,9 +156,7 @@ public class HomeFeed extends JPanel
         }
 
         /* 4. Now we need to sort the list of posts in chronological order */
-        /* The list will automatically be sorted since it's in a treemap */
         this.posts = new TreeMap<>(this.posts.descendingMap());
-        System.out.println(this.posts);
     }
 
     /**
