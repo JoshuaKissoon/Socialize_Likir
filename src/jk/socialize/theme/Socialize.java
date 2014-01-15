@@ -16,6 +16,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -233,7 +234,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         content.setBorder(null);
 
         /* 4.1. Put the "Add Status Form" at the top of the content area */
-        panel = new StatusAddForm(cUserProfile);
+        panel = new StatusAddForm(cUserProfile, this);
         gbc = JGridBagLayout.getItemConstraints(5, 5);
         content.add(panel, gbc);
 
@@ -255,7 +256,8 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         /* 6. SIDEBAR */
-        sidebar = new JPanel(new GridBagLayout());
+        sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         sidebar.setBackground(Color.LIGHT_GRAY);
 
         /* Add the sidebar to the main panel */
@@ -277,24 +279,14 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         frame.pack();
         frame.setVisible(true);
     }
-
-    private class HomeFeedUpdater implements Callable<Object>
+    
+    public void addSidebarMessage(SocializeMessage message)
     {
-
-        @Override
-        public Object call()
-        {
-            System.out.println("********************** Scheduled home feed update started. *********************************************\n\n");
-            homeFeedsPanel.removeAll();
-            HomeFeed homeFeed = new HomeFeed(cUserProfile);
-            homeFeedsPanel.add(homeFeed.getFeeds());
-            homeFeedsPanel.revalidate();
-            homeFeedsPanel.repaint();
-            System.out.println("*****************************Scheduled home feed update ended. ********************************************\n\n");
-            return "Called!";
-        }
+        sidebar.add(message);
+        sidebar.revalidate();
+        sidebar.repaint();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent event)
     {

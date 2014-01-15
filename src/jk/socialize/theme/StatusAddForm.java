@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import jk.socialize.system.abstraction.SocializeNode;
@@ -27,21 +29,27 @@ public class StatusAddForm extends JPanel implements ActionListener
     private final JPanel form = this;
     private final Profile profile;
     private final SocializeNode node;
+    private final Socialize mainFrame;
 
     /* Form Components */
     private final JTextArea statusTA;
     private final JButton btn;
+    private final JScrollPane scrollPane;
 
-    public StatusAddForm(Profile iProfile)
+    public StatusAddForm(Profile iProfile, Socialize imainFrame)
     {
         this.profile = iProfile;
         this.node = this.profile.getNode();
+        this.mainFrame = imainFrame;
 
         form.setLayout(new BorderLayout());
         form.setBorder(new EmptyBorder(30, 30, 30, 30));
 
         statusTA = new JTextArea(5, 40);
-        form.add(statusTA, BorderLayout.CENTER);
+        statusTA.setWrapStyleWord(true);
+        statusTA.setLineWrap(true);
+        scrollPane = new JScrollPane(statusTA);
+        form.add(scrollPane, BorderLayout.CENTER);
 
         btn = new JButton("Post");
         btn.setActionCommand("postStatus");
@@ -76,6 +84,7 @@ public class StatusAddForm extends JPanel implements ActionListener
                 PostsReference refss = profile.getPostsReference();
                 System.out.println(refss);
                 statusTA.setText("");
+                this.mainFrame.addSidebarMessage(new SocializeMessage("Your Status update was successfully posted", SocializeMessage.MESSAGE_TYPE_SUCCESS));
             }
             catch (IOException | InterruptedException | ExecutionException e)
             {
