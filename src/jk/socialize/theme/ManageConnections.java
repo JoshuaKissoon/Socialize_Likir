@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import jk.socialize.system.core.content.Connections;
 import jk.socialize.system.core.content.Profile;
-import jk.socialize.system.core.content.UserData;
+import jk.socialize.system.core.content.User;
 import jk.socialize.utilities.JGridBagLayout;
 
 /**
@@ -86,13 +86,13 @@ public class ManageConnections extends JFrame implements ActionListener
             connProfile.loadProfile();
 
             /* 1.2. Load the user data object from this profile */
-            UserData connUserData = connProfile.getUserData();
+            User connUserData = connProfile.getUserData();
 
             /* 1.3. Display the user's information */
             userPanel = new JPanel(new GridBagLayout());
 
             /* User's Name */
-            lbl = new JLabel("Name: " + connUserData.getData(UserData.DATA_NAME));
+            lbl = new JLabel("Name: " + connUserData.getData(User.DATA_NAME));
             gbc = JGridBagLayout.getLabelConstraints(0, 0);
             userPanel.add(lbl, gbc);
 
@@ -142,7 +142,7 @@ public class ManageConnections extends JFrame implements ActionListener
                 {
                     /* Load the user data object from this connection's profile */
                     connProfile.loadProfile();
-                    UserData connUserData = connProfile.getUserData();
+                    User connUserData = connProfile.getUserData();
                     ViewConnectionProfile vcp = new ViewConnectionProfile(connUserData);
                     vcp.showGUI();
                 }

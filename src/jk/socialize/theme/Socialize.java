@@ -12,7 +12,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.swing.Box;
@@ -23,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -32,6 +32,7 @@ import jk.socialize.system.core.content.Profile;
 import jk.socialize.system.abstraction.SocializeNode;
 import jk.socialize.system.core.Session;
 import jk.socialize.system.core.content.ConnectionRequests;
+import jk.socialize.system.core.content.User;
 import jk.socialize.utilities.JGridBagLayout;
 import unito.likir.settings.PropFinder;
 import unito.likir.settings.Settings;
@@ -67,11 +68,12 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
 
     /* Other frame components */
     private JScrollPane scrollPane;
+    private Boolean frameVisible = true;
 
-    public Socialize()
+    public Socialize(String iPassword)
     {
         /* Here we connect the node to the network */
-        this.initializeNode();
+        this.initializeNode(iPassword);
 
         /* Create and Load the GUI */
         SwingUtilities.invokeLater(new Runnable()
@@ -84,7 +86,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         });
     }
 
-    private void initializeNode()
+    private void initializeNode(String iPassword)
     {
         /* Create and Initialize the node */
         String userId = Session.userId;
@@ -122,7 +124,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         if (!cUserProfile.profileExists())
         {
             System.out.println("No profile Exists; lets create a new profile");
-            cUserProfile.createProfile();
+            cUserProfile.createProfile(iPassword);
         }
         else
         {
@@ -131,6 +133,13 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
             cUserProfile.loadProfile();
             /* Lets get the connection requests again and see if it's updated */
             ConnectionRequests userCr = cUserProfile.getConnectionRequests();
+            User user = cUserProfile.getUserData();
+            if(!user.isUserPassword(iPassword))
+            {
+                JOptionPane.showMessageDialog(null, "Incorrect password");
+                this.frameVisible = false;
+                new Login();
+            }
             System.out.println(userCr);
         }
 
@@ -277,7 +286,7 @@ public class Socialize extends JFrame implements WindowListener, ActionListener
         frame.setJMenuBar(menuBar);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setVisible(true);
+        frame.setVisible(this.frameVisible);
     }
     
     public void addSidebarMessage(SocializeMessage message)

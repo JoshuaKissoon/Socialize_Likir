@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import jk.socialize.system.core.content.Profile;
-import jk.socialize.system.core.content.UserData;
+import jk.socialize.system.core.content.User;
 import jk.socialize.utilities.JGridBagLayout;
 
 /**
@@ -28,7 +28,7 @@ public class EditProfile extends JFrame implements ActionListener
     /* Variable Declarations */
     private final JFrame frame = this;
     private final Profile cUserProfile;
-    private final UserData cUserData;
+    private final User cUserData;
 
     /* JFrame Components */
     private JPanel mainPanel;
@@ -65,7 +65,7 @@ public class EditProfile extends JFrame implements ActionListener
         lbl = new JLabel("Name: ");
         gbc = JGridBagLayout.getLabelConstraints(0, 0);
         mainPanel.add(lbl, gbc);
-        nameTF = new JTextField(this.cUserData.getData(UserData.DATA_NAME).toString(), 20);
+        nameTF = new JTextField(this.cUserData.getData(User.DATA_NAME).toString(), 20);
         gbc = JGridBagLayout.getItemConstraints(1, 0);
         mainPanel.add(nameTF, gbc);
 
@@ -73,7 +73,7 @@ public class EditProfile extends JFrame implements ActionListener
         lbl = new JLabel("Socialize Username: ");
         gbc = JGridBagLayout.getLabelConstraints(0, 1);
         mainPanel.add(lbl, gbc);
-        usernameTF = new JTextField(this.cUserData.getData(UserData.DATA_SOCIALIZE_USERNAME).toString(), 15);
+        usernameTF = new JTextField(this.cUserData.getData(User.DATA_SOCIALIZE_USERNAME).toString(), 15);
         gbc = JGridBagLayout.getItemConstraints(1, 1);
         mainPanel.add(usernameTF, gbc);
 
@@ -81,7 +81,7 @@ public class EditProfile extends JFrame implements ActionListener
         lbl = new JLabel("DOB: ");
         gbc = JGridBagLayout.getLabelConstraints(0, 2);
         mainPanel.add(lbl, gbc);
-        dobTF = new JTextField(this.cUserData.getData(UserData.DATA_DOB).toString(), 20);
+        dobTF = new JTextField(this.cUserData.getData(User.DATA_DOB).toString(), 20);
         gbc = JGridBagLayout.getItemConstraints(1, 2);
         mainPanel.add(dobTF, gbc);
 
@@ -115,9 +115,9 @@ public class EditProfile extends JFrame implements ActionListener
         {
             case "save":
                 /* Update the UserData values on the DHT */
-                this.cUserData.putData(UserData.DATA_NAME, nameTF.getText());
-                this.cUserData.putData(UserData.DATA_SOCIALIZE_USERNAME, usernameTF.getText());
-                this.cUserData.putData(UserData.DATA_DOB, dobTF.getText());
+                this.cUserData.putData(User.DATA_NAME, nameTF.getText());
+                this.cUserData.putData(User.DATA_SOCIALIZE_USERNAME, usernameTF.getText());
+                this.cUserData.putData(User.DATA_DOB, dobTF.getText());
                 try
                 {
                     cUserProfile.getNode().storeLocallyAndUniversally(this.cUserData);

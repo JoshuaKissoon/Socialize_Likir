@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import jk.socialize.system.core.content.ConnectionRequests;
 import jk.socialize.system.core.content.SocializeContent;
 import unito.likir.Node;
 import unito.likir.NodeId;

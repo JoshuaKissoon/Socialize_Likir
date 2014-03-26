@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import jk.socialize.system.core.content.Profile;
-import jk.socialize.system.core.content.UserData;
+import jk.socialize.system.core.content.User;
 import jk.socialize.utilities.JGridBagLayout;
 
 /**
@@ -22,7 +22,7 @@ public class ViewProfile extends JFrame
     /* Variable Declarations */
     private final JFrame frame = this;
     private final Profile cUserProfile;
-    private final UserData cUserData;
+    private final User cUserData;
 
     /* JFrame Components */
     private JPanel mainPanel;
@@ -58,7 +58,7 @@ public class ViewProfile extends JFrame
         gbc = JGridBagLayout.getLabelConstraints(0, 0);
         mainPanel.add(lbl, gbc);
 
-        lbl = new JLabel(this.cUserData.getData(UserData.DATA_NAME).toString());
+        lbl = new JLabel(this.cUserData.getData(User.DATA_NAME).toString());
         gbc = JGridBagLayout.getLabelConstraints(1, 0);
         mainPanel.add(lbl, gbc);
 
@@ -66,7 +66,7 @@ public class ViewProfile extends JFrame
         lbl = new JLabel("Socialize Username: ");
         gbc = JGridBagLayout.getLabelConstraints(0, 1);
         mainPanel.add(lbl, gbc);
-        lbl = new JLabel(this.cUserData.getData(UserData.DATA_SOCIALIZE_USERNAME).toString());
+        lbl = new JLabel(this.cUserData.getData(User.DATA_SOCIALIZE_USERNAME).toString());
         gbc = JGridBagLayout.getLabelConstraints(1, 1);
         mainPanel.add(lbl, gbc);
 
@@ -74,7 +74,7 @@ public class ViewProfile extends JFrame
         lbl = new JLabel("DOB: ");
         gbc = JGridBagLayout.getLabelConstraints(0, 2);
         mainPanel.add(lbl, gbc);
-        lbl = new JLabel(this.cUserData.getData(UserData.DATA_DOB).toString());
+        lbl = new JLabel(this.cUserData.getData(User.DATA_DOB).toString());
         gbc = JGridBagLayout.getLabelConstraints(1, 2);
         mainPanel.add(lbl, gbc);
 

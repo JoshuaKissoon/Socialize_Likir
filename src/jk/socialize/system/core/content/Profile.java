@@ -11,9 +11,10 @@ import unito.likir.NodeId;
 import unito.likir.storage.StorageEntry;
 
 /**
+ * A content type that's basically the profile of a user; it contains all objects related to this user
+ *
  * @author Joshua Kissoon
- * @date 20131023
- * @description A content type that's basically the profile of a user; it contains all objects related to this user
+ * @since 20131023
  */
 public class Profile implements SocializeContent
 {
@@ -37,7 +38,7 @@ public class Profile implements SocializeContent
     private PostsReference postsReference = null;
     private ConnectionRequests connectionRequests = null;
     private Connections connections = null;
-    private UserData userData = null;
+    private User userData = null;
 
     /**
      * @desc Constructor for a profile
@@ -76,7 +77,7 @@ public class Profile implements SocializeContent
         {
             System.out.println("Node \"" + node.getUserId() + "\" Checking if a profile exists; Profile ID " + this.key + "\n");
 
-            Collection<StorageEntry> results = node.get(this.getKey(), this.type, this.uid, false, 5).get();
+            Collection<StorageEntry> results = node.get(this.getKey(), Profile.type, this.uid, false, 5).get();
 
             if (results.isEmpty())
             {
@@ -104,7 +105,7 @@ public class Profile implements SocializeContent
      * @description Creates a new profile for this node
      * @return whether the profile was successfully created
      */
-    public Boolean createProfile()
+    public Boolean createProfile(String ipassword)
     {
         System.out.println(" *********************** Creating a new profile ************************ ");
         /* 1. Create and store a connections object */
@@ -143,7 +144,8 @@ public class Profile implements SocializeContent
         {
             System.out.println("Creating & Storing User Data Object.");
 
-            UserData uData = new UserData(this.uid);
+            User uData = new User(this.uid);
+            uData.setPassword(ipassword);
             int replica = node.storeLocallyAndUniversally(uData);
             System.out.println("User Data Object Stored at " + replica + " Replicas \n");
             this.userDataRefNid = uData.getKey();
@@ -316,8 +318,8 @@ public class Profile implements SocializeContent
 
         return this.postsReference;
     }
-    
-    public UserData getUserData()
+
+    public User getUserData()
     {
         if (this.userData == null)
         {
@@ -327,7 +329,7 @@ public class Profile implements SocializeContent
                 System.out.println("Node \"" + node.getUserId() + "\" Loading UserData:" + this.key + "\n");
 
                 /* Get 5 of this user's profile and choose the most recent */
-                Collection<StorageEntry> results = node.get(this.userDataRefNid, UserData.type, this.uid, true, 5).get();
+                Collection<StorageEntry> results = node.get(this.userDataRefNid, User.type, this.uid, true, 5).get();
 
                 if (results.size() > 0)
                 {
@@ -339,7 +341,7 @@ public class Profile implements SocializeContent
                             recency = e.getSubmissionTime();
 
                             /* Load/update the profile from this entry */
-                            userData = new UserData();
+                            userData = new User();
                             userData.loadData(e.getContent().getValue());
                         }
                     }
@@ -390,7 +392,7 @@ public class Profile implements SocializeContent
 
         return this.connectionRequests;
     }
-    
+
     public Connections getConnections()
     {
         if (this.connections == null)

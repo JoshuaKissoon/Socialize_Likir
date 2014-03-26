@@ -2,7 +2,11 @@ package jk.socialize.system.core.content;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import org.bouncycastle.crypto.tls.HashAlgorithm;
 import unito.likir.NodeId;
 
 /**
@@ -10,7 +14,7 @@ import unito.likir.NodeId;
  * @date 20131024
  * @description A Content type that stores the data of a user
  */
-public class UserData implements SocializeContent
+public class User implements SocializeContent
 {
 
     /* Attributes */
@@ -18,12 +22,13 @@ public class UserData implements SocializeContent
     private String uid;
     public static final String type = "UserData";
     private final long ttl = 999999999999l;
+    private String hashedPassword;
 
     /* Storage Objects */
     HashMap<String, Object> userData = new HashMap<>();
 
     /* Constants that represent the different data stored */
-    public static String DATA_SOCIALIZE_USERNAME = "username";
+    public static String DATA_SOCIALIZE_USERNAME = "uid";
     public static String DATA_NAME = "name";
     public static String DATA_DOB = "dob";
     public static String DATA_PHOTO = "photo";
@@ -31,18 +36,46 @@ public class UserData implements SocializeContent
     /**
      * @desc A blank constructor in case data is loaded from the DHT
      */
-    public UserData()
+    public User()
     {
-
+        
     }
-
-    public UserData(String iOwnerUid)
+    
+    public User(String iOwnerUid)
     {
         /* Set the userId */
         this.uid = iOwnerUid;
+        putData(DATA_SOCIALIZE_USERNAME, this.uid);
 
         /* Setup the status key here */
         this.generateKey();
+    }
+    
+    public void setPassword(String ipassword)
+    {
+        this.hashedPassword = this.hashPassword(ipassword);
+    }
+    
+    public Boolean isUserPassword(String ipassword)
+    {
+        return this.hashedPassword.equals(this.hashPassword(ipassword));
+    }
+    
+    private String hashPassword(String ipassword)
+    {
+        String hash = "";
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            String text = "This is some text";
+            md.update(ipassword.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+            hash = new String(md.digest());
+        }
+        catch (NoSuchAlgorithmException | UnsupportedEncodingException e)
+        {
+            
+        }
+        return hash;
     }
 
     /**
@@ -83,7 +116,7 @@ public class UserData implements SocializeContent
             return "";
         }
     }
-
+    
     public Object putData(String iDataKey, Object iData)
     {
         return this.userData.put(iDataKey, iData);
@@ -106,7 +139,7 @@ public class UserData implements SocializeContent
     @Override
     public String getType()
     {
-        return UserData.type;
+        return User.type;
     }
 
     /**
@@ -143,6 +176,7 @@ public class UserData implements SocializeContent
             HashMap data = gson.fromJson(jsonString, HashMap.class);
             this.userData = gson.fromJson(data.get("userData").toString(), HashMap.class);
             this.uid = data.get("uid").toString();
+            this.hashedPassword = data.get("hashedPassword").toString();
             this.key = new NodeId(data.get("key").toString().getBytes());
             return true;
         }
@@ -179,10 +213,11 @@ public class UserData implements SocializeContent
         data.put("userData", gson.toJson(this.userData));
         data.put("uid", this.uid);
         data.put("type", Connections.type);
+        data.put("hashedPassword", this.hashedPassword);
         data.put("key", new String(this.key.getId()));
         return gson.toJson(data);
     }
-
+    
     @Override
     public long getTtl()
     {
@@ -196,12 +231,12 @@ public class UserData implements SocializeContent
     public String toString()
     {
         String data = "************ PRINTING UserData START ************** \n ";
-
+        
         data += "Key: " + new String(this.key.getId()) + "\n";
         data += "Connections: " + this.userData + "\n";
-
+        
         data += "************ PRINTING UserData END ************** \n\n";
-
+        
         return data;
     }
 }

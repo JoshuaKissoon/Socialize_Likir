@@ -88,7 +88,7 @@ public class Login extends JFrame implements ActionListener
             /* Login the user */
             Session.userId = userNameTF.getText();
             Session.password = new String(passwordTF.getPassword());
-            new Socialize();
+            Socialize soc = new Socialize(Session.password);
             frame.dispose();
         }
     }

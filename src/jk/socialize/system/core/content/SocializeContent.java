@@ -18,14 +18,18 @@ public interface SocializeContent extends Content
 
     /**
      * @param jsonString A Json string with the data of this object
+     *
      * @return Returns whether the data was successfully loaded or not
+     *
      * @description Here we load data from the DHT into the object
      */
     public boolean loadData(String jsonString);
-    
+
     /**
      * @param data A byte array of data returned from the DHT
+     *
      * @return Returns whether the data was successfully loaded or not
+     *
      * @description Here we load the data from the DHT into the object
      */
     public boolean loadData(byte[] data);
@@ -34,8 +38,8 @@ public interface SocializeContent extends Content
      * @return Returns the data needed to be stored encoded in Json form
      */
     public String getJsonEncodedData();
-    
-    /** 
+
+    /**
      * @desc method that tells how long a content should live on the DHT
      * @return Returns how long this content will live for
      */
